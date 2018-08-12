@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Apisearch\SyliusApisearchPlugin\DependencyInjection;
 
 use Apisearch\Query\Aggregation;
-use Apisearch\SyliusApisearchPlugin\FilterAdapter;
-use Apisearch\SyliusApisearchPlugin\Version;
+use Apisearch\Query\Filter;
+use Apisearch\SyliusApisearchPlugin\Element;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Apisearch\Query\Filter;
 
 final class Configuration implements ConfigurationInterface
 {
@@ -18,15 +17,14 @@ final class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('sylius_apisearch');
 
         $rootNode
             ->children()
                 ->enumNode('version')
-                    ->values([Version::VERSION_DYNAMIC, Version::VERSION_STATIC])
-                    ->defaultValue(Version::VERSION_STATIC)
+                    ->values([Element::VERSION_DYNAMIC, Element::VERSION_STATIC])
+                    ->defaultValue(Element::VERSION_STATIC)
                 ->end()
                 ->scalarNode('repository')
                     ->defaultValue('product')
@@ -35,7 +33,7 @@ final class Configuration implements ConfigurationInterface
                     ->defaultValue('product')
                 ->end()
                 ->scalarNode('show_price_filter')
-            ->defaultTrue()
+                    ->defaultTrue()
                 ->end()
                 ->scalarNode('show_text_search')
                     ->defaultTrue()
@@ -65,8 +63,8 @@ final class Configuration implements ConfigurationInterface
                                 ->defaultValue(Aggregation::SORT_BY_COUNT_DESC)
                             ->end()
                             ->enumNode('type')
-                                ->values([FilterAdapter::FILTER_OPTION, FilterAdapter::FILTER_ATTRIBUTE])
-                                ->defaultValue(FilterAdapter::FILTER_ATTRIBUTE)
+                                ->values([Element::FILTER_OPTION, Element::FILTER_ATTRIBUTE])
+                                ->defaultValue(Element::FILTER_ATTRIBUTE)
                             ->end()
                         ->end()
                     ->end()

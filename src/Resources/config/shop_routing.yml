@@ -1,0 +1,7 @@
+sylius_apisearch_static_taxon:
+    path: /taxon/{slug}
+    defaults:
+        _controller: sylius_apisearch.controller.taxon_static
+        template: "@SyliusApisearchPlugin/Taxon/static.html.twig"
+    requirements:
+        slug: .+

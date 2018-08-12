@@ -30,6 +30,7 @@
         "phpunit/phpunit": "^6.5",
         "sylius-labs/coding-standard": "^2.0"
     },
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
@@ -39,6 +40,11 @@
     },
     "autoload-dev": {
         "classmap": ["tests/Application/app/AppKernel.php"]
+    },
+    "scripts": {
+        "fix": [
+            "./bin/ecs check --ansi --no-progress-bar --config easy-coding-standard.yml src tests --fix"
+        ]
     },
     "extra": {
         "branch-alias": {

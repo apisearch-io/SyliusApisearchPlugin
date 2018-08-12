@@ -1,0 +1,4 @@
+imports:
+  - { resource: "services/configuration.yml" }
+  - { resource: "services/context.yml" }
+  - { resource: "services/controller.yml" }

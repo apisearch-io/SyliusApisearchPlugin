@@ -7,7 +7,7 @@ namespace Apisearch\SyliusApisearchPlugin;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-final class SyliusApiSearchPlugin extends Bundle
+final class SyliusApisearchPlugin extends Bundle
 {
     use SyliusPluginTrait;
 }

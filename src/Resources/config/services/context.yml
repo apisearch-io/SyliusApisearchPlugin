@@ -1,0 +1,6 @@
+services:
+    sylius_apisearch.context.taxon:
+        class: Apisearch\SyliusApisearchPlugin\Context\TaxonContext
+        arguments:
+          - "@sylius.repository.taxon"
+          - "@sylius.context.locale"
