@@ -1,13 +1,35 @@
 {% extends '@SyliusShop/layout.html.twig' %}
 
+{% import "ApisearchBundle:Macros:aggregations.html.twig" as _aggregations %}
+{% import "ApisearchBundle:Macros:pagination.html.twig" as _pagination %}
+{% import "ApisearchBundle:Macros:order.html.twig" as _order %}
+
+
 {% block content %}
     {% include '@SyliusShop/Product/Index/_header.html.twig' %}
     <div class="ui stackable grid">
         <div class="four wide column">
             {% include '@SyliusApisearchPlugin/Taxon/Static/_sidebar.html.twig' %}
+
+            {% for filter in configuration.getFilters() %}
+                {{ _aggregations.printAggregation(result, filter['field']) }}
+            {% endfor %}
+
+            {#{{ _aggregations.printPriceRange(result) }}#}
         </div>
         <div class="twelve wide column">
+            {% if result.items|length > 0 %}
+                <div class="ui three cards" id="products">
+                    {% for product in result.items %}
+                        {% include '@SyliusApisearchPlugin/Taxon/Static/_box.html.twig' %}
+                    {% endfor %}
+                </div>
+                <div class="ui hidden divider"></div>
 
+                {{ _pagination.printPaginator(result) }}
+            {% else %}
+                {{ messages.info('sylius.ui.no_results_to_display') }}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

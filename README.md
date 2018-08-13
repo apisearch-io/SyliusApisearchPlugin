@@ -1,83 +1,25 @@
-<p align="center">
-    <a href="https://sylius.com" target="_blank">
-        <img src="https://demo.sylius.com/assets/shop/img/logo.png" />
-    </a>
-</p>
+# [WIP] Apisearch - Sylius Apisearch Plugin
 
-<h1 align="center">Plugin Skeleton</h1>
+This library is part of the Apisearch project.
 
-<p align="center">Skeleton for starting Sylius plugins.</p>
+[![Join the chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/apisearch_io/general)
 
-## Installation
+Apisearch is an open source search engine fully based on open source third party
+technologies. The project provides an *in cresciendo* set of language 
+integration libraries for her users, as well as some third party projects 
+integration bundles, plugins, or javascript widgets.
 
-1. Run `composer create-project sylius/plugin-skeleton ProjectName`.
+Some first steps for you!
 
-2. From the plugin skeleton root directory, run the following commands:
+- [Download and install Apisearch](http://docs.apisearch.io/#download-and-install-apisearch)
+- [Create your first application](http://docs.apisearch.io/#create-your-first-application)
+- [Add some data](http://docs.apisearch.io/#add-some-data)
+- [Create your first search bar](http://docs.apisearch.io/#create-my-first-search-bar)
 
-    ```bash
-    $ (cd tests/Application && yarn install)
-    $ (cd tests/Application && yarn run gulp)
-    $ (cd tests/Application && bin/console assets:install web -e test)
-    
-    $ (cd tests/Application && bin/console doctrine:database:create -e test)
-    $ (cd tests/Application && bin/console doctrine:schema:create -e test)
-    ```
+Take a tour using these links.
 
-## Usage
-
-### Running plugin tests
-
-  - PHPUnit
-
-    ```bash
-    $ bin/phpunit
-    ```
-
-  - PHPSpec
-
-    ```bash
-    $ bin/phpspec run
-    ```
-
-  - Behat (non-JS scenarios)
-
-    ```bash
-    $ bin/behat --tags="~@javascript"
-    ```
-
-  - Behat (JS scenarios)
- 
-    1. Download [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/)
-    
-    2. Run Selenium server with previously downloaded Chromedriver:
-    
-        ```bash
-        $ bin/selenium-server-standalone -Dwebdriver.chrome.driver=chromedriver
-        ```
-    3. Run test application's webserver on `localhost:8080`:
-    
-        ```bash
-        $ (cd tests/Application && bin/console server:run 127.0.0.1:8080 -d web -e test)
-        ```
-    
-    4. Run Behat:
-    
-        ```bash
-        $ bin/behat --tags="@javascript"
-        ```
-
-### Opening Sylius with your plugin
-
-- Using `test` environment:
-
-    ```bash
-    $ (cd tests/Application && bin/console sylius:fixtures:load -e test)
-    $ (cd tests/Application && bin/console server:run -d web -e test)
-    ```
-    
-- Using `dev` environment:
-
-    ```bash
-    $ (cd tests/Application && bin/console sylius:fixtures:load -e dev)
-    $ (cd tests/Application && bin/console server:run -d web -e dev)
-    ```
+- [Documentation](http://docs.apisearch.io)
+- [View a demo](http://apisearch.io)
+- [Talk with us](https://apisearch.slack.com)
+- [Twitter](https://twitter.com/apisearch_io)
+- [Youtube Channel]()

@@ -5,3 +5,11 @@ sylius_apisearch_static_taxon:
         template: "@SyliusApisearchPlugin/Taxon/static.html.twig"
     requirements:
         slug: .+
+
+sylius_apisearch_dynamic_taxon:
+    path: /taxon-dynamic/{slug}
+    defaults:
+        _controller: sylius_apisearch.controller.taxon_dynamic
+        template: "@SyliusApisearchPlugin/Taxon/static.html.twig"
+    requirements:
+        slug: .+

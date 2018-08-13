@@ -8,3 +8,11 @@ services:
        - "@sylius_apisearch.context.taxon"
        - "@sylius_apisearch.search"
        - "@templating"
+
+  sylius_apisearch.controller.taxon_dynamic:
+      class: Apisearch\SyliusApisearchPlugin\Controller\TaxonDynamicController
+      public: true
+      arguments:
+        - "@sylius_apisearch.configuration"
+        - "@sylius_apisearch.context.taxon"
+        - "@templating"

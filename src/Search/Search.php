@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Sylius Apisearch Plugin
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * Feel free to edit as you please, and have fun.
+ *
+ * @author Marc Morera <yuhu@mmoreram.com>
+ */
+
 declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Search;
@@ -10,6 +21,7 @@ use Apisearch\Repository\TransformableRepository;
 use Apisearch\Result\Result;
 use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
 use Apisearch\SyliusApisearchPlugin\Element;
+use Apisearch\Url\UrlBuilder;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -26,17 +38,25 @@ class Search implements SearchInterface
     private $configuration;
 
     /**
+     * @var UrlBuilder
+     */
+    private $urlBuilder;
+
+    /**
      * Search constructor.
      *
      * @param TransformableRepository $repository
      * @param ApisearchConfigurationInterface $configuration
+     * @param UrlBuilder $urlBuilder
      */
     public function __construct(
         TransformableRepository $repository,
-        ApisearchConfigurationInterface $configuration
+        ApisearchConfigurationInterface $configuration,
+        UrlBuilder $urlBuilder
     ) {
         $this->repository = $repository;
         $this->configuration = $configuration;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -47,6 +67,10 @@ class Search implements SearchInterface
      */
     public function getResult(Request $request, TaxonInterface $taxon): Result
     {
+        $this->urlBuilder->setRoutesDictionary([
+            'main' => 'sylius_apisearch_static_taxon',
+        ]);
+
         $requestQuery = $request->query;
 
         $query = Query::create(
@@ -69,8 +93,8 @@ class Search implements SearchInterface
             [
                 \sprintf(
                     '%d..%d',
-                    $this->createPriceRequest($request, 'min'),
-                    $this->createPriceRequest($request, 'max')
+                    (int) $this->createPriceRequest($request, 'min'),
+                    (int) $this->createPriceRequest($request, 'max')
                 ),
             ],
             FILTER::MUST_ALL
