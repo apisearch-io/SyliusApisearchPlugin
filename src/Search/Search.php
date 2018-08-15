@@ -68,15 +68,15 @@ class Search implements SearchInterface
     public function getResult(Request $request, TaxonInterface $taxon): Result
     {
         $this->urlBuilder->setRoutesDictionary([
-            'main' => 'sylius_apisearch_static_taxon',
+            'main' => 'sylius_shop_product_index',
         ]);
 
         $requestQuery = $request->query;
 
         $query = Query::create(
             $request->get('search', ''),
-            (int) $request->get('page', Query::DEFAULT_PAGE),
-            (int) $request->get('page_size', Query::DEFAULT_SIZE)
+            $this->getCurrentPage($request),
+            $this->getCurrentSize($request)
         );
 
         $query->filterUniverseBy(
@@ -125,6 +125,26 @@ class Search implements SearchInterface
         }
 
         return $this->repository->query($query);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return int
+     */
+    public function getCurrentPage(Request $request): int
+    {
+        return (int) $request->get('page', Query::DEFAULT_PAGE);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return int
+     */
+    public function getCurrentSize(Request $request): int
+    {
+        return (int) $request->get('page_size', Query::DEFAULT_SIZE);
     }
 
     /**

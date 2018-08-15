@@ -28,4 +28,18 @@ interface SearchInterface
      * @return Result
      */
     public function getResult(Request $request, TaxonInterface $taxon): Result;
+
+    /**
+     * @param Request $request
+     *
+     * @return int
+     */
+    public function getCurrentPage(Request $request): int;
+
+    /**
+     * @param Request $request
+     *
+     * @return int
+     */
+    public function getCurrentSize(Request $request): int;
 }

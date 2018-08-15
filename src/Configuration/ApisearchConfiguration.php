@@ -82,13 +82,11 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
     }
 
     /**
-     * @param string $version
-     *
-     * @return bool
+     * @return string
      */
-    public function isVersion(string $version): bool
+    public function getVersion(): string
     {
-        return $version === $this->version;
+        return $this->version;
     }
 
     /**

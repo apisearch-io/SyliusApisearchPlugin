@@ -1,9 +1,9 @@
 {% extends '@SyliusShop/layout.html.twig' %}
 
 {% import "ApisearchBundle:Macros:aggregations.html.twig" as _aggregations %}
-{% import "ApisearchBundle:Macros:pagination.html.twig" as _pagination %}
 {% import "ApisearchBundle:Macros:order.html.twig" as _order %}
-
+{% import '@SyliusUi/Macro/messages.html.twig' as messages %}
+{% import '@SyliusUi/Macro/pagination.html.twig' as pagination %}
 
 {% block content %}
     {% include '@SyliusShop/Product/Index/_header.html.twig' %}
@@ -26,7 +26,7 @@
                 </div>
                 <div class="ui hidden divider"></div>
 
-                {{ _pagination.printPaginator(result) }}
+                {{ pagination.simple(pager) }}
             {% else %}
                 {{ messages.info('sylius.ui.no_results_to_display') }}
             {% endif %}

@@ -1,15 +1,7 @@
-sylius_apisearch_static_taxon:
-    path: /taxon/{slug}
+sylius_shop_product_index:
+    path: /taxons/{slug}
     defaults:
-        _controller: sylius_apisearch.controller.taxon_static
-        template: "@SyliusApisearchPlugin/Taxon/static.html.twig"
-    requirements:
-        slug: .+
-
-sylius_apisearch_dynamic_taxon:
-    path: /taxon-dynamic/{slug}
-    defaults:
-        _controller: sylius_apisearch.controller.taxon_dynamic
+        _controller: sylius_apisearch.controller.taxon
         template: "@SyliusApisearchPlugin/Taxon/static.html.twig"
     requirements:
         slug: .+

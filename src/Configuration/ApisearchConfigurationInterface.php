@@ -18,11 +18,9 @@ namespace Apisearch\SyliusApisearchPlugin\Configuration;
 interface ApisearchConfigurationInterface
 {
     /**
-     * @param string $version
-     *
-     * @return bool
+     * @return string
      */
-    public function isVersion(string $version): bool;
+    public function getVersion(): string;
 
     /**
      * @return string
