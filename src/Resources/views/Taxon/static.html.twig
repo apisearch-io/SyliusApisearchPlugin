@@ -25,8 +25,16 @@
         <div class="twelve wide column">
             <div class="ui segment">
                 <div class="ui stackable grid">
-                    <div class="ten wide column">
-                        {# Sorting #}
+                    <div class="three wide column">
+                        <div class="item">
+                            <select class="ui fluid search dropdown">
+                                <option value="">Sorting</option>
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="seven wide column">
                         <div class="item">
                             <div class="ui fluid input">
                                 <input placeholder="{{ 'apisearch.ui.fields.query' | trans }}" type="text" value=""
