@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\DependencyInjection;
 
+use Apisearch\SyliusApisearchPlugin\Element;
 use Apisearch\SyliusApisearchPlugin\Search\Search;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -40,6 +41,8 @@ final class SyliusApisearchExtension extends Extension
         $this->createParameter($container, $config, 'show_text_search');
         $this->createParameter($container, $config, 'enable_autocomplete');
         $this->createParameter($container, $config, 'filters');
+
+        $container->setParameter('sylius_apisearch.config.template', Element::$versionTemplate[$config[0]['version']]);
 
         $loader->load('services.yml');
 

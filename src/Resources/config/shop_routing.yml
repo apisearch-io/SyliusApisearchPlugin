@@ -2,6 +2,6 @@ sylius_shop_product_index:
     path: /taxons/{slug}
     defaults:
         _controller: sylius_apisearch.controller.taxon
-        template: "@SyliusApisearchPlugin/Taxon/static.html.twig"
+        template: "%sylius_apisearch.config.template%"
     requirements:
         slug: .+

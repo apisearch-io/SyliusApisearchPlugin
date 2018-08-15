@@ -25,4 +25,9 @@ final class Element
 
     public const VERSION_STATIC = 'static';
     public const VERSION_DYNAMIC = 'dynamic';
+
+    public static $versionTemplate = [
+        self::VERSION_STATIC => '@SyliusApisearchPlugin/Taxon/static.html.twig',
+        self::VERSION_DYNAMIC => '@SyliusApisearchPlugin/Taxon/dynamic.html.twig',
+    ];
 }
