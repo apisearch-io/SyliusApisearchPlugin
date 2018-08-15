@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Controller;
 
-use Apisearch\Query\Query;
 use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
 use Apisearch\SyliusApisearchPlugin\Context\TaxonContextInterface;
 use Apisearch\SyliusApisearchPlugin\Element;
@@ -85,9 +84,11 @@ class TaxonController
         switch ($this->configuration->getVersion()) {
             case Element::VERSION_STATIC:
                 $parameters = $this->versionStatic($request, $taxon);
+
                 break;
             case Element::VERSION_DYNAMIC:
                 $parameters = $this->versionDynamic();
+
                 break;
             default:
                 throw new VersionUnavailableException($version);
@@ -98,7 +99,7 @@ class TaxonController
             \array_merge(
                 [
                     'taxon' => $taxon,
-                    'configuration' => $this->configuration
+                    'configuration' => $this->configuration,
                 ],
                 $parameters
             )
@@ -128,7 +129,7 @@ class TaxonController
 
         return [
             'result' => $result,
-            'pager' => $pagerfanta
+            'pager' => $pagerfanta,
         ];
     }
 
