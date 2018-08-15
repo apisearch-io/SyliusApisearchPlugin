@@ -23,6 +23,29 @@
             </div>
         </div>
         <div class="twelve wide column">
+            <div class="ui segment">
+                <div class="ui stackable grid">
+                    <div class="ten wide column">
+                        {# Sorting #}
+                        <div class="item">
+                            <div class="ui fluid input">
+                                <input placeholder="{{ 'apisearch.ui.fields.query' | trans }}" type="text" value=""
+                                       name="q">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="three wide column">
+                        <div class="ui buttons">
+                            <button type="submit" class="ui primary icon labeled button"><i
+                                        class="search icon"></i> {{ 'sylius.ui.search'|trans }}</button>
+                            <a href="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}"
+                               class="ui negative icon labeled button">
+                                <i class="cancel icon"></i> {{ 'sylius.ui.clear'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% if result.items|length > 0 %}
                 <div class="ui three cards" id="products">
                     {% for product in result.items %}

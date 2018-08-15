@@ -74,7 +74,7 @@ class Search implements SearchInterface
         $requestQuery = $request->query;
 
         $query = Query::create(
-            $request->get('search', ''),
+            $request->get('q', ''),
             $this->getCurrentPage($request),
             $this->getCurrentSize($request)
         );
