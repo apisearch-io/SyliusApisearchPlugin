@@ -11,7 +11,6 @@
             {% include '@SyliusApisearchPlugin/Taxon/Static/_sidebar.html.twig' %}
 
             <div class="ui fluid vertical menu">
-
                 <div class="header item">
                     {{ 'apisearch.ui.filters'|trans }}
                 </div>
@@ -19,9 +18,9 @@
                 {% for filter in configuration.getFilters() %}
                     {{ _aggregations.printAggregation(result, filter['field']) }}
                 {% endfor %}
-            </div>
 
-            {#{{ _aggregations.printPriceRange(result) }}#}
+                {{ _aggregations.printPriceRange(result) }}
+            </div>
         </div>
         <div class="twelve wide column">
             {% if result.items|length > 0 %}
