@@ -1,7 +1,6 @@
 {% extends '@SyliusShop/layout.html.twig' %}
 
-{% import "ApisearchBundle:Macros:aggregations.html.twig" as _aggregations %}
-{% import "ApisearchBundle:Macros:order.html.twig" as _order %}
+{% import "@SyliusApisearchPlugin/Taxon/Static/_aggregations.html.twig" as _aggregations %}
 {% import '@SyliusUi/Macro/messages.html.twig' as messages %}
 {% import '@SyliusUi/Macro/pagination.html.twig' as pagination %}
 
@@ -11,9 +10,16 @@
         <div class="four wide column">
             {% include '@SyliusApisearchPlugin/Taxon/Static/_sidebar.html.twig' %}
 
-            {% for filter in configuration.getFilters() %}
-                {{ _aggregations.printAggregation(result, filter['field']) }}
-            {% endfor %}
+            <div class="ui fluid vertical menu">
+
+                <div class="header item">
+                    {{ 'apisearch.ui.filters'|trans }}
+                </div>
+
+                {% for filter in configuration.getFilters() %}
+                    {{ _aggregations.printAggregation(result, filter['field']) }}
+                {% endfor %}
+            </div>
 
             {#{{ _aggregations.printPriceRange(result) }}#}
         </div>
