@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Configuration;
 
+use Apisearch\SyliusApisearchPlugin\Element;
+
 class ApisearchConfiguration implements ApisearchConfigurationInterface
 {
     /**
@@ -130,10 +132,18 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
     }
 
     /**
+     * @param string|null $type
+     *
      * @return array
      */
-    public function getFilters(): array
+    public function getFilters(?string $type = null): array
     {
+        if (\in_array($type, Element::$filters)) {
+            return \array_filter($this->filters, function (array $filter) use ($type) {
+                return $filter['type'] === $type;
+            });
+        }
+
         return $this->filters;
     }
 }

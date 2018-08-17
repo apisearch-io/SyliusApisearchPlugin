@@ -1,4 +1,7 @@
 imports:
   - { resource: "services/configuration.yml" }
+  - { resource: "services/command.yml" }
   - { resource: "services/context.yml" }
   - { resource: "services/controller.yml" }
+  - { resource: "services/transformer.yml" }
+  - { resource: "services/populate.yml" }

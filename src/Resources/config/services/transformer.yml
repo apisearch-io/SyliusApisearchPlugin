@@ -1,0 +1,10 @@
+services:
+
+  sylius_apisearch.transformer.product:
+    class: Apisearch\SyliusApisearchPlugin\Transformer\ProductTransformer
+    arguments:
+      - "@sylius_apisearch.configuration"
+      - "@sylius.context.locale"
+    tags:
+      - { name: apisearch.write_transformer }
+      - { name: apisearch.read_transformer }

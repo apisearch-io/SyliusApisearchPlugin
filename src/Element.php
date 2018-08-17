@@ -30,4 +30,9 @@ final class Element
         self::VERSION_STATIC => '@SyliusApisearchPlugin/Taxon/static.html.twig',
         self::VERSION_DYNAMIC => '@SyliusApisearchPlugin/Taxon/dynamic.html.twig',
     ];
+
+    public static $filters = [
+        self::FILTER_OPTION,
+        self::FILTER_ATTRIBUTE,
+    ];
 }

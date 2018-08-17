@@ -1,8 +1,10 @@
 {% import "@SyliusShop/Common/Macro/money.html.twig" as money %}
 
 <div class="ui fluid card">
-    <a class="header sylius-product-name">{{ product.metadata.name }}</a>
+    <a class="header sylius-product-name"></a>
 </div>
+
+{{ dump(product) }}
 
 {#
 <div class="ui fluid card">

@@ -48,7 +48,9 @@ interface ApisearchConfigurationInterface
     public function isEnableAutocomplete(): bool;
 
     /**
+     * @param string|null $type
+     *
      * @return array
      */
-    public function getFilters(): array;
+    public function getFilters(?string $type = null): array;
 }

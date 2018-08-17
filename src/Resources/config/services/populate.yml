@@ -1,0 +1,11 @@
+services:
+
+  sylius_apisearch.populate.resetting:
+      class: Apisearch\SyliusApisearchPlugin\Populate\Resetting
+      arguments:
+        - "@sylius_apisearch.configuration"
+        - "@apisearch.repository_bucket"
+
+  sylius_apisearch.populate.populate:
+    class: Apisearch\SyliusApisearchPlugin\Populate\Populate
+

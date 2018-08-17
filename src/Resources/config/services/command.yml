@@ -1,0 +1,16 @@
+services:
+
+  sylius_apisearch.command.populate:
+    class: Apisearch\SyliusApisearchPlugin\Command\PopulateCommand
+    arguments:
+      - "@sylius_apisearch.populate.resetting"
+      - "@sylius_apisearch.populate.populate"
+    tags:
+      - { name: console.command }
+
+  sylius_apisearch.command.reset:
+    class: Apisearch\SyliusApisearchPlugin\Command\ResetCommand
+    arguments:
+      - "@sylius_apisearch.populate.resetting"
+    tags:
+      - { name: console.command }
