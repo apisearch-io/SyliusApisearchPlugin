@@ -64,7 +64,6 @@ class PopulateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $perPage = (int) $input->getOption('max-per-page');
         $reset = !$input->getOption('no-reset');
         if ($reset) {
             $output->writeln('Resetting index');
@@ -72,6 +71,7 @@ class PopulateCommand extends Command
         }
 
         $output->writeln('Populate index');
+        $perPage = (int) $input->getOption('max-per-page');
         $this->populate->populate($perPage);
     }
 }

@@ -138,12 +138,12 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
      */
     public function getFilters(?string $type = null): array
     {
-        if (\in_array($type, Element::$filters)) {
-            return \array_filter($this->filters, function (array $filter) use ($type) {
-                return $filter['type'] === $type;
-            });
+        if (false === \in_array($type, Element::$filters)) {
+            return $this->filters;
         }
 
-        return $this->filters;
+        return \array_filter($this->filters, function (array $filter) use ($type) {
+            return $filter['type'] === $type;
+        });
     }
 }
