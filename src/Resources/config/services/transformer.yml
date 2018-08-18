@@ -5,6 +5,7 @@ services:
     arguments:
       - "@sylius_apisearch.configuration"
       - "@sylius.context.locale"
+      - "@sylius.repository.product"
     tags:
       - { name: apisearch.write_transformer }
       - { name: apisearch.read_transformer }

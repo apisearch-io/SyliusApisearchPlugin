@@ -15,12 +15,15 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Transformer;
 
+use _HumbugBox5b705df51bad6\Nette\Neon\Exception;
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
 use Apisearch\SyliusApisearchPlugin\Element;
 use Apisearch\Transformer\ReadTransformer;
 use Apisearch\Transformer\WriteTransformer;
+use Doctrine\Common\Collections\Collection;
+use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository;
 use Sylius\Component\Core\Model\ChannelPricingInterface;
 use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductInterface;
@@ -37,17 +40,23 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      * @var LocaleContextInterface
      */
     private $localeContext;
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
 
     /**
      * ProductTransformer constructor.
      *
      * @param ApisearchConfigurationInterface $configuration
      * @param LocaleContextInterface $localeContext
+     * @param ProductRepository $productRepository
      */
-    public function __construct(ApisearchConfigurationInterface $configuration, LocaleContextInterface $localeContext)
+    public function __construct(ApisearchConfigurationInterface $configuration, LocaleContextInterface $localeContext, ProductRepository $productRepository)
     {
         $this->configuration = $configuration;
         $this->localeContext = $localeContext;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -71,16 +80,10 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     public function fromItem(Item $item)
     {
-        $product = new Product();
-
-        $product->setCurrentLocale((string) $item->get('locale'));
-        $product->setName($item->get('name'));
-        $product->setDescription($item->get('description'));
-        $product->setCode($item->get('code'));
-        $product->setSlug($item->get('slug'));
-
-        // @TODO others fields
-
+        $product = $this->productRepository->findByCode($item->get('code'));
+        if (null === $product) {
+            throw new Exception();
+        }
         return $product;
     }
 
