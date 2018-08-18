@@ -23,6 +23,7 @@ use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterfac
 use Apisearch\SyliusApisearchPlugin\Element;
 use Apisearch\Url\UrlBuilder;
 use Sylius\Component\Core\Model\TaxonInterface;
+use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Search implements SearchInterface
@@ -43,20 +44,28 @@ class Search implements SearchInterface
     private $urlBuilder;
 
     /**
+     * @var LocaleContextInterface
+     */
+    private $localeContext;
+
+    /**
      * Search constructor.
      *
      * @param TransformableRepository $repository
      * @param ApisearchConfigurationInterface $configuration
      * @param UrlBuilder $urlBuilder
+     * @param LocaleContextInterface $localeContext
      */
     public function __construct(
         TransformableRepository $repository,
         ApisearchConfigurationInterface $configuration,
-        UrlBuilder $urlBuilder
+        UrlBuilder $urlBuilder,
+        LocaleContextInterface $localeContext
     ) {
         $this->repository = $repository;
         $this->configuration = $configuration;
         $this->urlBuilder = $urlBuilder;
+        $this->localeContext = $localeContext;
     }
 
     /**
@@ -83,6 +92,13 @@ class Search implements SearchInterface
             Element::FIELD_TAXON_CODE,
             [
                 $taxon->getCode(),
+            ]
+        );
+
+        $query->filterUniverseBy(
+            Element::FIELD_LOCALE,
+            [
+                $this->localeContext->getLocaleCode(),
             ]
         );
 

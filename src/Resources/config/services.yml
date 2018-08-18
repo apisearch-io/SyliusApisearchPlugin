@@ -5,3 +5,4 @@ imports:
   - { resource: "services/controller.yml" }
   - { resource: "services/transformer.yml" }
   - { resource: "services/populate.yml" }
+  - { resource: "services/search.yml" }

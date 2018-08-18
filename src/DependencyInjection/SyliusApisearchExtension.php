@@ -16,12 +16,10 @@ declare(strict_types=1);
 namespace Apisearch\SyliusApisearchPlugin\DependencyInjection;
 
 use Apisearch\SyliusApisearchPlugin\Element;
-use Apisearch\SyliusApisearchPlugin\Search\Search;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 
 final class SyliusApisearchExtension extends Extension
 {
@@ -51,13 +49,7 @@ final class SyliusApisearchExtension extends Extension
             $config[0]['repository'],
             $config[0]['index']
         );
-
-        $container
-            ->register('sylius_apisearch.search', Search::class)
-            ->addArgument(new Reference($apiSearchKey))
-            ->addArgument(new Reference('sylius_apisearch.configuration'))
-            ->addArgument(new Reference('apisearch.url_builder'))
-        ;
+        $container->setAlias('sylius_apisearch.repository', $apiSearchKey);
     }
 
     /**

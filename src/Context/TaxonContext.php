@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Apisearch\SyliusApisearchPlugin\Context;
 
 use Apisearch\SyliusApisearchPlugin\Exception\TaxonNotFoundException;
-use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 

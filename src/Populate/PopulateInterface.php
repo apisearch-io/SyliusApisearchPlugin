@@ -15,10 +15,24 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Populate;
 
+use Sylius\Component\Core\Model\ProductInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
 interface PopulateInterface
 {
     /**
+     * @param OutputInterface $output
      * @param int $perPage
+     *
+     * @throws \Exception
      */
-    public function populate(int $perPage): void;
+    public function populate(OutputInterface $output, int $perPage): void;
+
+    /**
+     * @param ProductInterface $product
+     * @param bool $flush
+     *
+     * @throws \Exception
+     */
+    public function populateSingle(ProductInterface $product, bool $flush = true): void;
 }

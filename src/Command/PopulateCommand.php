@@ -21,6 +21,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Assert\Assert;
 
 class PopulateCommand extends Command
 {
@@ -54,16 +55,21 @@ class PopulateCommand extends Command
             ->setName('apisearch:sylius:populate')
             ->addOption('no-reset', null, InputOption::VALUE_NONE, 'Do not reset index before populating')
             ->addOption('max-per-page', null, InputOption::VALUE_REQUIRED, 'The pager\'s page size', 100)
-            ->setDescription('Populates search indexes')
+            ->setDescription('Populates product index')
         ;
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     *
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
+        $perPage = (int) $input->getOption('max-per-page');
+        Assert::greaterThan($perPage, 0);
+
         $reset = !$input->getOption('no-reset');
         if ($reset) {
             $output->writeln('Resetting index');
@@ -71,7 +77,6 @@ class PopulateCommand extends Command
         }
 
         $output->writeln('Populate index');
-        $perPage = (int) $input->getOption('max-per-page');
-        $this->populate->populate($perPage);
+        $this->populate->populate($output, $perPage);
     }
 }

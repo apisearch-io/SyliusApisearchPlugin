@@ -18,6 +18,7 @@ namespace Apisearch\SyliusApisearchPlugin\Transformer;
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
+use Apisearch\SyliusApisearchPlugin\Element;
 use Apisearch\Transformer\ReadTransformer;
 use Apisearch\Transformer\WriteTransformer;
 use Sylius\Component\Core\Model\ChannelPricingInterface;
@@ -62,7 +63,7 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     public function isValidItem(Item $item): bool
     {
-        return $item->getType() === 'product';
+        return $item->getType() === Element::PRODUCT_TRANSFORMER_KEY;
     }
 
     /**
@@ -76,6 +77,9 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
         $product->setName($item->get('name'));
         $product->setDescription($item->get('description'));
         $product->setCode($item->get('code'));
+        $product->setSlug($item->get('slug'));
+
+        // @TODO others fields
 
         return $product;
     }
@@ -86,8 +90,8 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
     public function toItemUUID($object): ItemUUID
     {
         return new ItemUUID(
-            $object->getId(),
-            'product'
+            $object->getCode(),
+            Element::PRODUCT_TRANSFORMER_KEY
         );
     }
 
@@ -105,12 +109,13 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
                 'slug' => $object->getSlug(),
                 'images' => $object->getImages(),
                 'code' => $object->getCode(),
+                'locale' => $this->localeContext->getLocaleCode(),
             ],
             \array_merge(
                 [
-                    'locale' => $this->localeContext->getLocaleCode(),
-                    'taxon' => $this->getTaxons($object),
-                    'price' => $this->getPrices($object),
+                    Element::FIELD_LOCALE => $this->localeContext->getLocaleCode(),
+                    Element::FIELD_TAXON_CODE => $this->getTaxons($object),
+                    Element::FIELD_PRICE => $this->getPrices($object),
                 ],
                 $this->getOptions($object),
                 $this->getAttributes($object)
@@ -129,21 +134,21 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     private function getTaxons(ProductInterface $product): array
     {
-        $taxons = [];
+        $indexTaxons = [];
 
         $mainTaxon = $product->getMainTaxon();
         if (null !== $mainTaxon) {
-            $taxons[] = $mainTaxon->getCode();
+            $indexTaxons[] = $mainTaxon->getCode();
         }
 
         $otherTaxons = $product->getTaxons();
         if ($otherTaxons->count() > 0) {
             foreach ($otherTaxons as $taxon) {
-                $taxons[] = $taxon->getCode();
+                $indexTaxons[] = $taxon->getCode();
             }
         }
 
-        return $taxons;
+        return $indexTaxons;
     }
 
     /**
@@ -157,15 +162,15 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
             return [];
         }
 
-        $prices = [];
+        $indexPrices = [];
         foreach ($product->getVariants() as $variant) {
             /** @var ChannelPricingInterface $channelPricing */
             foreach ($variant->getChannelPricings() as $channelPricing) {
-                $prices[] = $channelPricing->getPrice();
+                $indexPrices[] = $channelPricing->getPrice();
             }
         }
 
-        return $prices;
+        return $indexPrices;
     }
 
     /**
@@ -175,7 +180,25 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     private function getOptions(ProductInterface $product): array
     {
-        return [];
+        $options = $product->getOptions();
+        if (null === $options) {
+            return [];
+        }
+
+        $configurationOptions = \array_column(
+            $this->configuration->getFilters(Element::FILTER_OPTION),
+            'name'
+        );
+
+        $indexOptions = [];
+        foreach ($options as $option) {
+            $code = $option->getCode();
+            if (\in_array($code, $configurationOptions)) {
+                $indexOptions[$code] = $option->getValue();
+            }
+        }
+
+        return $indexOptions;
     }
 
     /**
@@ -185,6 +208,24 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     private function getAttributes(ProductInterface $product): array
     {
-        return [];
+        $attributes = $product->getAttributes();
+        if (null === $attributes) {
+            return [];
+        }
+
+        $configurationAttributes = \array_column(
+            $this->configuration->getFilters(Element::FILTER_ATTRIBUTE),
+            'name'
+        );
+
+        $indexAttributes = [];
+        foreach ($attributes as $attribute) {
+            $code = $attribute->getCode();
+            if (\in_array($code, $configurationAttributes)) {
+                $indexAttributes[$code] = $attribute->getValue();
+            }
+        }
+
+        return $indexAttributes;
     }
 }

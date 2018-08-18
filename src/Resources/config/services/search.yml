@@ -1,0 +1,9 @@
+services:
+
+  sylius_apisearch.search.search:
+      class: Apisearch\SyliusApisearchPlugin\Search\Search
+      arguments:
+        - "@sylius_apisearch.repository"
+        - "@sylius_apisearch.configuration"
+        - "@apisearch.url_builder"
+        - "@sylius.context.locale"

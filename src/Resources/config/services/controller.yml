@@ -6,5 +6,5 @@ services:
       arguments:
        - "@sylius_apisearch.configuration"
        - "@sylius_apisearch.context.taxon"
-       - "@sylius_apisearch.search"
+       - "@sylius_apisearch.search.search"
        - "@templating"

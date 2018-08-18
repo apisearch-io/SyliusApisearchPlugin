@@ -17,14 +17,17 @@ namespace Apisearch\SyliusApisearchPlugin;
 
 final class Element
 {
-    public const FIELD_TAXON_CODE = 'taxon_code';
+    public const FIELD_TAXON_CODE = 'taxon';
     public const FIELD_PRICE = 'price';
+    public const FIELD_LOCALE = 'locale';
 
     public const FILTER_OPTION = 'option';
     public const FILTER_ATTRIBUTE = 'attribute';
 
     public const VERSION_STATIC = 'static';
     public const VERSION_DYNAMIC = 'dynamic';
+
+    public const PRODUCT_TRANSFORMER_KEY = 'product';
 
     public static $versionTemplate = [
         self::VERSION_STATIC => '@SyliusApisearchPlugin/Taxon/static.html.twig',

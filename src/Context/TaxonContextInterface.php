@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Context;
 
-use Sylius\Component\Core\Model\TaxonInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 interface TaxonContextInterface
