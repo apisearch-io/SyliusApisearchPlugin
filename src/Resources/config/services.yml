@@ -3,6 +3,7 @@ imports:
   - { resource: "services/command.yml" }
   - { resource: "services/context.yml" }
   - { resource: "services/controller.yml" }
-  - { resource: "services/transformer.yml" }
+  - { resource: "services/listener.yml" }
   - { resource: "services/populate.yml" }
   - { resource: "services/search.yml" }
+  - { resource: "services/transformer.yml" }

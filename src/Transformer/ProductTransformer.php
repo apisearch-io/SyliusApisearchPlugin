@@ -22,7 +22,6 @@ use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterfac
 use Apisearch\SyliusApisearchPlugin\Element;
 use Apisearch\Transformer\ReadTransformer;
 use Apisearch\Transformer\WriteTransformer;
-use Doctrine\Common\Collections\Collection;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository;
 use Sylius\Component\Core\Model\ChannelPricingInterface;
 use Sylius\Component\Core\Model\Product;
@@ -84,6 +83,7 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
         if (null === $product) {
             throw new Exception();
         }
+
         return $product;
     }
 

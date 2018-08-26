@@ -122,4 +122,37 @@ class Populate implements PopulateInterface
             $this->transformableRepository->flush();
         }
     }
+
+    /**
+     * @param ProductInterface $product
+     * @param bool $flush
+     *
+     * @throws \Exception
+     */
+    public function removeSingle(ProductInterface $product, bool $flush = true): void
+    {
+        $product = $this->productTransformer->toItem($product);
+        $this->transformableRepository->deleteItem($product->getUUID());
+
+        if ($flush) {
+            $this->transformableRepository->flush();
+        }
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @param bool $flush
+     *
+     * @throws \Exception
+     */
+    public function updateSingle(ProductInterface $product, bool $flush = true): void
+    {
+        $product = $this->productTransformer->toItem($product);
+        $this->transformableRepository->deleteItem($product->getUUID());
+        $this->transformableRepository->addItem($product);
+
+        if ($flush) {
+            $this->transformableRepository->flush();
+        }
+    }
 }

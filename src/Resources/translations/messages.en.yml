@@ -1,0 +1,8 @@
+apisearch:
+  ui:
+    filters: Filters
+    sorting: Sorting
+    remove_selected: Remove selected
+    fields:
+      price: Price
+      query: Keywords

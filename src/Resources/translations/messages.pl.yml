@@ -1,0 +1,8 @@
+apisearch:
+  ui:
+    filters: Filtry
+    sorting: Sortowanie
+    remove_selected: Usuń filtry
+    fields:
+      price: Cena
+      query: Szukana fraza

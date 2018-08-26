@@ -28,7 +28,7 @@
                     <div class="three wide column">
                         <div class="item">
                             <select class="ui fluid search dropdown">
-                                <option value="">Sorting</option>
+                                <option value="">{{ 'apisearch.ui.sorting' | trans }}</option>
                                 <option value="1">Male</option>
                                 <option value="0">Female</option>
                             </select>
@@ -68,4 +68,10 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {% include 'SyliusUiBundle::_javascripts.html.twig' with {'path': 'bundles/syliusapisearchplugin/js/apisearch-taxon.js'} %}
 {% endblock %}

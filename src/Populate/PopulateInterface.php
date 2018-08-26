@@ -35,4 +35,20 @@ interface PopulateInterface
      * @throws \Exception
      */
     public function populateSingle(ProductInterface $product, bool $flush = true): void;
+
+    /**
+     * @param ProductInterface $product
+     * @param bool $flush
+     *
+     * @throws \Exception
+     */
+    public function removeSingle(ProductInterface $product, bool $flush = true): void;
+
+    /**
+     * @param ProductInterface $product
+     * @param bool $flush
+     *
+     * @throws \Exception
+     */
+    public function updateSingle(ProductInterface $product, bool $flush = true): void;
 }

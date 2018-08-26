@@ -116,7 +116,7 @@ class TaxonController
     {
         $result = $this->search->getResult($request, $taxon);
 
-        $pagerAdapter = new NullAdapter($result->getTotalItems());
+        $pagerAdapter = new NullAdapter($result->getTotalHits());
         $pagerfanta = new Pagerfanta($pagerAdapter);
 
         $pagerfanta->setMaxPerPage(
