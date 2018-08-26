@@ -1,0 +1,8 @@
+services:
+
+  apisearch.url_builder_extension:
+    class: Apisearch\SyliusApisearchPlugin\Twig\UrlBuilderExtension
+    arguments:
+      - "@sylius_apisearch.url.url_builder"
+    tags:
+      - { name: twig.extension }

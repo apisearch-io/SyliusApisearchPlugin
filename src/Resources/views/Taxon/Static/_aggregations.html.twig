@@ -72,25 +72,38 @@
     {% set aggregation = result.aggregation('price') %}
 
     {% if aggregation != null and not aggregation.isEmpty() %}
-        {% set result_min_price = 0 %}
-        {% set result_max_price = 100 %}
+        {% set result_min_price = app.request.query.get('price_min') %}
+        {% set result_max_price = app.request.get('price_max') %}
         <div class="item">
             <div class="field">
                 {{ _aggregations.printTitle('price') }}
                 <div class="ui relaxed divided list">
                     <div class="item">
                         <div class="ui fluid input">
-                            <input placeholder="{{ 'apisearch.ui.fields.min_price' | trans }}" type="text" value="{{ result_min_price }}">
+                            <input class="apisearch--price-min"
+                                   placeholder="{{ 'apisearch.ui.fields.min_price' | trans }}" type="text"
+                                   value="{{ result_min_price < 0 ? '' : result_min_price }}">
                         </div>
                     </div>
                     <div class="item">
                         <div class="ui fluid input">
-                            <input placeholder="{{ 'apisearch.ui.fields.max_price' | trans }}" type="text" value="{{ result_max_price }}">
+                            <input class="apisearch--price-max"
+                                   placeholder="{{ 'apisearch.ui.fields.max_price' | trans }}" type="text"
+                                   value="{{ result_max_price < 0 ? '' : result_max_price }}">
                         </div>
                     </div>
                 </div>
-                {% if app.request.query.has('price') %}
+
+                <div>
+                    <a href="#" data-price-min=".apisearch--price-min" data-price-max=".apisearch--price-max"
+                       data-url="{{ result|remove_price_range_filter }}" class="fluid ui green button apisearch--filter-price-button">
+                        {{ 'apisearch.ui.filter' |trans }}
+                    </a>
+                </div>
+
+                {% if app.request.query.has('price_min') or app.request.query.has('price_max') %}
                     <div>
+                        <hr>
                         <a href="{{ result|remove_price_range_filter }}" class="fluid ui red button">
                             {{ "apisearch.ui.remove_selected"|trans }}
                         </a>

@@ -15,7 +15,6 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Transformer;
 
-use _HumbugBox5b705df51bad6\Nette\Neon\Exception;
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
@@ -24,7 +23,6 @@ use Apisearch\Transformer\ReadTransformer;
 use Apisearch\Transformer\WriteTransformer;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository;
 use Sylius\Component\Core\Model\ChannelPricingInterface;
-use Sylius\Component\Core\Model\Product;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 
@@ -51,8 +49,11 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      * @param LocaleContextInterface $localeContext
      * @param ProductRepository $productRepository
      */
-    public function __construct(ApisearchConfigurationInterface $configuration, LocaleContextInterface $localeContext, ProductRepository $productRepository)
-    {
+    public function __construct(
+        ApisearchConfigurationInterface $configuration,
+        LocaleContextInterface $localeContext,
+        ProductRepository $productRepository
+    ) {
         $this->configuration = $configuration;
         $this->localeContext = $localeContext;
         $this->productRepository = $productRepository;
@@ -76,12 +77,14 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \Exception
      */
     public function fromItem(Item $item)
     {
         $product = $this->productRepository->findByCode($item->get('code'));
         if (null === $product) {
-            throw new Exception();
+            throw new \Exception();
         }
 
         return $product;
@@ -119,6 +122,7 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
                     Element::FIELD_LOCALE => $this->localeContext->getLocaleCode(),
                     Element::FIELD_TAXON_CODE => $this->getTaxons($object),
                     Element::FIELD_PRICE => $this->getPrices($object),
+                    Element::FIELD_ID => $object->getId(),
                 ],
                 $this->getOptions($object),
                 $this->getAttributes($object)

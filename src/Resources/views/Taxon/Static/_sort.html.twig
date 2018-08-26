@@ -1,0 +1,29 @@
+{% macro printOrderBy(result) %}
+
+    {% import _self as _order %}
+
+    <div class="ui compact menu">
+        <div class="ui simple dropdown item">
+            {{ 'apisearch.ui.sorting.title' | trans }}
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                {{ _order.printOrderByElement(result, 'id', 'asc', 'position') }}
+                {{ _order.printOrderByElement(result, 'id', 'desc', 'position') }}
+                {{ _order.printOrderByElement(result, 'price', 'asc', 'price') }}
+                {{ _order.printOrderByElement(result, 'price', 'desc', 'price') }}
+            </div>
+        </div>
+    </div>
+{% endmacro printOrderBy %}
+
+
+{% macro printOrderByElement(result, field, direction, message) %}
+    {% set sortBy = result|add_sort_by(field, direction) %}
+    {% if sortBy is null %}
+        <div class="item">{{ ('apisearch.ui.sorting.'~message~'.'~direction) | trans }}</div>
+    {% else %}
+        <div class="item" onclick="location.href='{{ sortBy }}'">
+            {{ ('apisearch.ui.sorting.'~message~'.'~direction) | trans }}
+        </div>
+    {% endif %}
+{% endmacro printOrderByElement %}

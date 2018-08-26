@@ -17,11 +17,12 @@ namespace Apisearch\SyliusApisearchPlugin\Search;
 
 use Apisearch\Query\Filter;
 use Apisearch\Query\Query;
+use Apisearch\Query\SortBy;
 use Apisearch\Repository\TransformableRepository;
 use Apisearch\Result\Result;
 use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
 use Apisearch\SyliusApisearchPlugin\Element;
-use Apisearch\Url\UrlBuilder;
+use Apisearch\SyliusApisearchPlugin\Url\UrlBuilder;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,10 +77,6 @@ class Search implements SearchInterface
      */
     public function getResult(Request $request, TaxonInterface $taxon): Result
     {
-        $this->urlBuilder->setRoutesDictionary([
-            'main' => 'sylius_shop_product_index',
-        ]);
-
         $requestQuery = $request->query;
 
         $query = Query::create(
@@ -109,8 +106,8 @@ class Search implements SearchInterface
             [
                 \sprintf(
                     '%d..%d',
-                    (int) $this->createPriceRequest($request, 'min'),
-                    (int) $this->createPriceRequest($request, 'max')
+                    $this->createPriceRequest($request, 'min'),
+                    $this->createPriceRequest($request, 'max')
                 ),
             ],
             FILTER::MUST_ALL
@@ -139,6 +136,8 @@ class Search implements SearchInterface
                 $filter['aggregation_sort']
             );
         }
+
+        $this->getSort($request, $query);
 
         return $this->repository->query($query);
     }
@@ -171,7 +170,7 @@ class Search implements SearchInterface
      */
     private function createPriceRequest(Request $request, string $suffix): int
     {
-        return (int) $request->get(
+        $price = (int) $request->get(
             \sprintf(
                 '%s_%s',
                 Element::FIELD_PRICE,
@@ -179,5 +178,37 @@ class Search implements SearchInterface
             ),
             -1
         );
+
+        return $price > 0
+            ? (int) \round($price * 100, 2)
+            : -1
+        ;
+    }
+
+    /**
+     * @param Request $request
+     * @param Query $query
+     */
+    private function getSort(Request $request, Query $query): void
+    {
+        $sort = SortBy::create();
+
+        $sortBy = $request->get('sort_by', []);
+        if (\count($sortBy) <= 0) {
+            $sort->byFieldValue(Element::FIELD_ID, SortBy::ASC);
+            $query->sortBy($sort);
+
+            return;
+        }
+
+        $field = \array_keys($sortBy)[0];
+        $direction = \array_values($sortBy)[0];
+        $direction = $direction == SortBy::ASC
+                ? SortBy::ASC
+                : SortBy::DESC
+            ;
+
+        $sort->byFieldValue($field, $direction);
+        $query->sortBy($sort);
     }
 }

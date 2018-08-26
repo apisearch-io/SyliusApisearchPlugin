@@ -1,7 +1,15 @@
 apisearch:
   ui:
     filters: Filtry
-    sorting: Sortowanie
+    filter: Filtruj
+    sorting:
+      title: Sortowanie
+      position:
+        asc: Pozycja rosnąco
+        desc: Pozycja malejąco
+      price:
+        asc: Cena rosnąco
+        desc: Cena malejąco
     remove_selected: Usuń filtry
     fields:
       price: Cena

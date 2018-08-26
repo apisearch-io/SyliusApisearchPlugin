@@ -5,5 +5,5 @@ services:
       arguments:
         - "@sylius_apisearch.repository"
         - "@sylius_apisearch.configuration"
-        - "@apisearch.url_builder"
+        - "@sylius_apisearch.url.url_builder"
         - "@sylius.context.locale"

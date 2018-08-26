@@ -1,7 +1,15 @@
 apisearch:
   ui:
     filters: Filters
-    sorting: Sorting
+    filter: Filter
+    sorting:
+      title: Sorting
+      position:
+        asc: position asc
+        desc: position desc
+      price:
+        asc: price asc
+        desc: price desc
     remove_selected: Remove selected
     fields:
       price: Price

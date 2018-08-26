@@ -20,6 +20,7 @@ final class Element
     public const FIELD_TAXON_CODE = 'taxon';
     public const FIELD_PRICE = 'price';
     public const FIELD_LOCALE = 'locale';
+    public const FIELD_ID = 'id';
 
     public const FILTER_OPTION = 'option';
     public const FILTER_ATTRIBUTE = 'attribute';

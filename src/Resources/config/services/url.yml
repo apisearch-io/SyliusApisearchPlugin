@@ -1,0 +1,7 @@
+services:
+
+  sylius_apisearch.url.url_builder:
+    class: Apisearch\SyliusApisearchPlugin\Url\UrlBuilder
+    arguments:
+      - "@request_stack"
+      - "@router"
