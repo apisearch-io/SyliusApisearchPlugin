@@ -202,11 +202,8 @@ class UrlBuilder
      *
      * @return string|null
      */
-    public function addSortBy(
-        Result $result,
-        string $field,
-        string $mode
-    ): ? string {
+    public function addSortBy(Result $result, string $field, string $mode): ? string
+    {
         $urlParameters = \array_merge(
             $this->generateQueryUrlParameters($result),
             [
@@ -233,6 +230,28 @@ class UrlBuilder
         if (SortBy::SCORE !== [$field => $mode]) {
             $urlParameters['sort_by'][$field] = $mode;
         }
+
+        return $this->router->generate(
+            $this->request->get('_route'),
+            $urlParameters
+        );
+    }
+
+    /**
+     * @param Result $result
+     * @param int $size
+     *
+     * @return string
+     */
+    public function changePageSize(Result $result, int $size): string
+    {
+        $urlParameters = \array_merge(
+            $this->generateQueryUrlParameters($result),
+            [
+                'slug' => $this->request->attributes->get('slug'),
+                'page_size' => $size
+            ]
+        );
 
         return $this->router->generate(
             $this->request->get('_route'),
@@ -294,6 +313,10 @@ class UrlBuilder
         $queryString = $queryFilter instanceof Filter
             ? $queryFilter->getValues()[0]
             : '';
+
+        if ($query->getSize() > 0) {
+            $urlParameters['page_size'] = $query->getSize();
+        }
 
         if (!empty($queryString)) {
             $urlParameters['q'] = $queryString;

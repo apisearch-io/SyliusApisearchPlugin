@@ -53,4 +53,9 @@ interface ApisearchConfigurationInterface
      * @return array
      */
     public function getFilters(?string $type = null): array;
+
+    /**
+     * @return array
+     */
+    public function getPaginationSize(): array;
 }

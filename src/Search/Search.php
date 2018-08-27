@@ -159,7 +159,13 @@ class Search implements SearchInterface
      */
     public function getCurrentSize(Request $request): int
     {
-        return (int) $request->get('page_size', Query::DEFAULT_SIZE);
+        $availablePaginationSize = $this->configuration->getPaginationSize();
+        $currentSize = (int) $request->get('page_size', $availablePaginationSize[0]);
+
+        return \in_array($currentSize, $availablePaginationSize)
+            ? $currentSize
+            : $availablePaginationSize[0]
+        ;
     }
 
     /**

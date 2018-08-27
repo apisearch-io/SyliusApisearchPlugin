@@ -9,3 +9,4 @@ services:
     - "%sylius_apisearch.config.show_text_search%"
     - "%sylius_apisearch.config.enable_autocomplete%"
     - "%sylius_apisearch.config.filters%"
+    - "%sylius_apisearch.config.pagination_size%"

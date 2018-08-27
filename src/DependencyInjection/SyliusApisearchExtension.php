@@ -39,6 +39,7 @@ final class SyliusApisearchExtension extends Extension
         $this->createParameter($container, $config, 'show_text_search');
         $this->createParameter($container, $config, 'enable_autocomplete');
         $this->createParameter($container, $config, 'filters');
+        $this->createParameter($container, $config, 'pagination_size');
 
         $container->setParameter('sylius_apisearch.config.template', Element::$versionTemplate[$config[0]['version']]);
 

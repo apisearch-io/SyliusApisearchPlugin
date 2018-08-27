@@ -49,6 +49,7 @@ class UrlBuilderExtension extends Twig_Extension
             new Twig_SimpleFilter('remove_price_range_filter', [$this->urlBuilder, 'removePriceRangeFilter']),
             new Twig_SimpleFilter('add_sort_by', [$this->urlBuilder, 'addSortBy']),
             new Twig_SimpleFilter('remove_query', [$this->urlBuilder, 'removeQuery']),
+            new Twig_SimpleFilter('change_page_size', [$this->urlBuilder, 'changePageSize']),
         ];
     }
 }

@@ -55,6 +55,11 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
     private $filters;
 
     /**
+     * @var array
+     */
+    private $paginationSize;
+
+    /**
      * ApisearchConfiguration constructor.
      *
      * @param string $version
@@ -64,6 +69,7 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
      * @param bool $showTextSearch
      * @param bool $enableAutocomplete
      * @param array $filters
+     * @param array $paginationSize
      */
     public function __construct(
         string $version,
@@ -72,7 +78,8 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
         bool $showPriceFilter,
         bool $showTextSearch,
         bool $enableAutocomplete,
-        array $filters
+        array $filters,
+        array $paginationSize
     ) {
         $this->version = $version;
         $this->repository = $repository;
@@ -81,6 +88,7 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
         $this->showTextSearch = $showTextSearch;
         $this->enableAutocomplete = $enableAutocomplete;
         $this->filters = $filters;
+        $this->paginationSize = $paginationSize;
     }
 
     /**
@@ -145,5 +153,19 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
         return \array_filter($this->filters, function (array $filter) use ($type) {
             return $filter['type'] === $type;
         });
+    }
+
+    /**
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getPaginationSize(): array
+    {
+        if (0 === \count($this->paginationSize)) {
+            throw new \Exception('Pagination size is not set up.');
+        }
+
+        return \array_values($this->paginationSize);
     }
 }
