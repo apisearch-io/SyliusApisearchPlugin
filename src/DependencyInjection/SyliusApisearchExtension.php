@@ -16,53 +16,60 @@ declare(strict_types=1);
 namespace Apisearch\SyliusApisearchPlugin\DependencyInjection;
 
 use Apisearch\SyliusApisearchPlugin\Element;
-use Symfony\Component\Config\FileLocator;
+use Mmoreram\BaseBundle\DependencyInjection\BaseExtension;
+use function sprintf;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-final class SyliusApisearchExtension extends Extension
+final class SyliusApisearchExtension extends BaseExtension
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function load(array $config, ContainerBuilder $container): void
+    protected function getConfigFilesLocation(): string
     {
-        $this->processConfiguration($this->getConfiguration([], $container), $config);
+        return __DIR__ . '/../Resources/config';
+    }
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+    protected function getConfigFiles(array $config): array
+    {
+        return [
+            'services',
+        ];
+    }
 
-        $this->createParameter($container, $config, 'version');
-        $this->createParameter($container, $config, 'repository');
-        $this->createParameter($container, $config, 'index');
-        $this->createParameter($container, $config, 'show_price_filter');
-        $this->createParameter($container, $config, 'show_text_search');
-        $this->createParameter($container, $config, 'enable_autocomplete');
-        $this->createParameter($container, $config, 'filters');
-        $this->createParameter($container, $config, 'pagination_size');
+    protected function getParametrizationValues(array $config): array
+    {
+        return [
+            'sylius_apisearch.config.version' => $config['version'],
+            'sylius_apisearch.config.show_price_filter' => $config['show_price_filter'],
+            'sylius_apisearch.config.show_text_search' => $config['show_text_search'],
+            'sylius_apisearch.config.enable_autocomplete' => $config['enable_autocomplete'],
+            'sylius_apisearch.config.filters' => $config['filters'],
+            'sylius_apisearch.config.pagination_size' => $config['pagination_size'],
+            'sylius_apisearch.config.template' => Element::$versionTemplate[$config['version']],
+        ];
+    }
 
-        $container->setParameter('sylius_apisearch.config.template', Element::$versionTemplate[$config[0]['version']]);
-
-        $loader->load('services.yml');
-
-        $apiSearchKey = \sprintf(
-            'apisearch.repository_%s.%s',
-            $config[0]['repository'],
-            $config[0]['index']
+    protected function postLoad(array $config, ContainerBuilder $container)
+    {
+        $container->setAlias(
+            'sylius_apisearch.repository',
+            sprintf('apisearch.repository_transformable_%1$s.%1$s', Element::INDEX_NAME)
         );
-        $container->setAlias('sylius_apisearch.repository', $apiSearchKey);
+    }
+
+    protected function getConfigurationInstance(): ? ConfigurationInterface
+    {
+        return new Configuration($this->getAlias());
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     * @param string $key
+     * Returns the recommended alias to use in XML.
+     *
+     * This alias is also the mandatory prefix to use when using YAML.
+     *
+     * @return string The alias
      */
-    private function createParameter(ContainerBuilder $container, array $config, string $key): void
+    public function getAlias()
     {
-        $container->setParameter(
-            \sprintf('sylius_apisearch.config.%s', $key),
-            $config[0][$key]
-        );
+        return 'sylius_apisearch';
     }
 }

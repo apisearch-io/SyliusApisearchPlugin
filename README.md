@@ -1,4 +1,6 @@
-# [WIP] Apisearch - Sylius Apisearch Plugin
+# Apisearch - Sylius Apisearch Plugin
+
+![Preview](./docs/preview.jpg)
 
 This library is part of the Apisearch project.
 
@@ -15,6 +17,7 @@ Some first steps for you!
 - [Create your first application](http://docs.apisearch.io/#create-your-first-application)
 - [Add some data](http://docs.apisearch.io/#add-some-data)
 - [Create your first search bar](http://docs.apisearch.io/#create-my-first-search-bar)
+- [Sylius Apisearch Plugin - Installation Guide](./docs/install.md)
 
 Take a tour using these links.
 

@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Apisearch\SyliusApisearchPlugin\Populate;
+namespace Apisearch\SyliusApisearchPlugin\Indexing;
 
 use Sylius\Component\Core\Model\ProductInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,34 +21,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 interface PopulateInterface
 {
     /**
-     * @param OutputInterface $output
-     * @param int $perPage
-     *
      * @throws \Exception
      */
     public function populate(OutputInterface $output, int $perPage): void;
 
     /**
-     * @param ProductInterface $product
-     * @param bool $flush
-     *
      * @throws \Exception
      */
     public function populateSingle(ProductInterface $product, bool $flush = true): void;
 
     /**
-     * @param ProductInterface $product
-     * @param bool $flush
-     *
      * @throws \Exception
      */
     public function removeSingle(ProductInterface $product, bool $flush = true): void;
 
     /**
-     * @param ProductInterface $product
-     * @param bool $flush
-     *
      * @throws \Exception
      */
     public function updateSingle(ProductInterface $product, bool $flush = true): void;
+
+    /**
+     * @throws Exception
+     */
+    public function flush(): void;
 }

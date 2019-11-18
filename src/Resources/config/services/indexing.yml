@@ -1,0 +1,13 @@
+services:
+
+  sylius_apisearch.indexing.resetting:
+      class: Apisearch\SyliusApisearchPlugin\Indexing\Resetting
+      arguments:
+        - "@sylius_apisearch.configuration"
+        - "@apisearch.app_repository_products"
+
+  sylius_apisearch.indexing.populate:
+      class: Apisearch\SyliusApisearchPlugin\Indexing\Populate
+      arguments:
+        - "@sylius_apisearch.repository"
+        - "@sylius_apisearch.transformer.product"

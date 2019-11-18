@@ -18,30 +18,21 @@ namespace Apisearch\SyliusApisearchPlugin\DependencyInjection;
 use Apisearch\Query\Aggregation;
 use Apisearch\Query\Filter;
 use Apisearch\SyliusApisearchPlugin\Element;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Mmoreram\BaseBundle\DependencyInjection\BaseConfiguration;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
-final class Configuration implements ConfigurationInterface
+final class Configuration extends BaseConfiguration
 {
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder(): TreeBuilder
+    protected function setupTree(ArrayNodeDefinition $rootNode)
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('sylius_apisearch');
-
         $rootNode
             ->children()
                 ->enumNode('version')
                     ->values([Element::VERSION_DYNAMIC, Element::VERSION_STATIC])
                     ->defaultValue(Element::VERSION_STATIC)
-                ->end()
-                ->scalarNode('repository')
-                    ->defaultValue('product')
-                ->end()
-                ->scalarNode('index')
-                    ->defaultValue('product')
                 ->end()
                 ->scalarNode('show_price_filter')
                     ->defaultTrue()
@@ -53,10 +44,9 @@ final class Configuration implements ConfigurationInterface
                     ->defaultTrue()
                 ->end()
                 ->arrayNode('pagination_size')
-                    ->scalarPrototype()
-                        ->defaultValue([30, 60, 120])
-                    ->end()
-                ->end()
+                    ->scalarPrototype()->end()
+                    ->defaultValue([9, 18, 36])
+            ->end()
                 ->arrayNode('filters')
                     ->prototype('array')
                         ->children()
@@ -87,7 +77,5 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
-
-        return $treeBuilder;
     }
 }

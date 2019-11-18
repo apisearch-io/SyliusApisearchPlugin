@@ -15,21 +15,17 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\EventListener;
 
-use Apisearch\SyliusApisearchPlugin\Populate\PopulateInterface;
+use Apisearch\SyliusApisearchPlugin\Indexing\PopulateInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ProductListener
 {
-    /**
-     * @var PopulateInterface
-     */
+    /** @var PopulateInterface */
     private $populate;
 
     /**
      * ProductListener constructor.
-     *
-     * @param PopulateInterface $populate
      */
     public function __construct(PopulateInterface $populate)
     {
@@ -37,8 +33,6 @@ class ProductListener
     }
 
     /**
-     * @param GenericEvent $event
-     *
      * @throws \Exception
      */
     public function onCreate(GenericEvent $event): void
@@ -53,8 +47,6 @@ class ProductListener
     }
 
     /**
-     * @param GenericEvent $event
-     *
      * @throws \Exception
      */
     public function onUpdate(GenericEvent $event): void
@@ -69,8 +61,6 @@ class ProductListener
     }
 
     /**
-     * @param GenericEvent $event
-     *
      * @throws \Exception
      */
     public function onDelete(GenericEvent $event): void

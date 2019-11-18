@@ -21,6 +21,10 @@ use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterfac
 use Apisearch\SyliusApisearchPlugin\Element;
 use Apisearch\Transformer\ReadTransformer;
 use Apisearch\Transformer\WriteTransformer;
+use function array_column;
+use function array_merge;
+use Exception;
+use function in_array;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository;
 use Sylius\Component\Core\Model\ChannelPricingInterface;
 use Sylius\Component\Core\Model\ProductInterface;
@@ -28,26 +32,17 @@ use Sylius\Component\Locale\Context\LocaleContextInterface;
 
 class ProductTransformer implements ReadTransformer, WriteTransformer
 {
-    /**
-     * @var ApisearchConfigurationInterface
-     */
+    /** @var ApisearchConfigurationInterface */
     protected $configuration;
 
-    /**
-     * @var LocaleContextInterface
-     */
+    /** @var LocaleContextInterface */
     private $localeContext;
-    /**
-     * @var ProductRepository
-     */
+
+    /** @var ProductRepository */
     private $productRepository;
 
     /**
      * ProductTransformer constructor.
-     *
-     * @param ApisearchConfigurationInterface $configuration
-     * @param LocaleContextInterface $localeContext
-     * @param ProductRepository $productRepository
      */
     public function __construct(
         ApisearchConfigurationInterface $configuration,
@@ -78,13 +73,15 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
     /**
      * {@inheritdoc}
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function fromItem(Item $item)
     {
-        $product = $this->productRepository->findByCode($item->get('code'));
+        $product = $this->productRepository->findBy(
+            ['code' => $item->get('code')]
+        );
         if (null === $product) {
-            throw new \Exception();
+            throw new Exception();
         }
 
         return $product;
@@ -117,7 +114,7 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
                 'code' => $object->getCode(),
                 'locale' => $this->localeContext->getLocaleCode(),
             ],
-            \array_merge(
+            array_merge(
                 [
                     Element::FIELD_LOCALE => $this->localeContext->getLocaleCode(),
                     Element::FIELD_TAXON_CODE => $this->getTaxons($object),
@@ -134,11 +131,6 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
         );
     }
 
-    /**
-     * @param ProductInterface $product
-     *
-     * @return array
-     */
     private function getTaxons(ProductInterface $product): array
     {
         $indexTaxons = [];
@@ -158,11 +150,6 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
         return $indexTaxons;
     }
 
-    /**
-     * @param ProductInterface $product
-     *
-     * @return array
-     */
     private function getPrices(ProductInterface $product): array
     {
         if (0 === $product->getVariants()->count()) {
@@ -180,39 +167,38 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
         return $indexPrices;
     }
 
-    /**
-     * @param ProductInterface $product
-     *
-     * @return array
-     */
     private function getOptions(ProductInterface $product): array
     {
-        $options = $product->getOptions();
-        if (null === $options) {
+        $variants = $product->getVariants();
+        if (null === $variants) {
             return [];
         }
 
-        $configurationOptions = \array_column(
+        $configurationOptions = array_column(
             $this->configuration->getFilters(Element::FILTER_OPTION),
-            'name'
+            'field'
         );
 
         $indexOptions = [];
-        foreach ($options as $option) {
-            $code = $option->getCode();
-            if (\in_array($code, $configurationOptions)) {
-                $indexOptions[$code] = $option->getValue();
+        foreach ($variants as $variant) {
+            $options = $variant->getOptionValues();
+            if (0 === $options->count()) {
+                continue;
+            }
+
+            foreach ($options as $option) {
+                $optionCode = $option->getOptionCode();
+                if (!in_array($optionCode, $configurationOptions)) {
+                    continue;
+                }
+
+                $indexOptions[$optionCode][] = $option->getValue();
             }
         }
 
         return $indexOptions;
     }
 
-    /**
-     * @param ProductInterface $product
-     *
-     * @return array
-     */
     private function getAttributes(ProductInterface $product): array
     {
         $attributes = $product->getAttributes();
@@ -220,15 +206,15 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
             return [];
         }
 
-        $configurationAttributes = \array_column(
+        $configurationAttributes = array_column(
             $this->configuration->getFilters(Element::FILTER_ATTRIBUTE),
-            'name'
+            'field'
         );
 
         $indexAttributes = [];
         foreach ($attributes as $attribute) {
             $code = $attribute->getCode();
-            if (\in_array($code, $configurationAttributes)) {
+            if (in_array($code, $configurationAttributes)) {
                 $indexAttributes[$code] = $attribute->getValue();
             }
         }

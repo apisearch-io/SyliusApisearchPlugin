@@ -15,47 +15,23 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Configuration;
 
+use Apisearch\Model\IndexUUID;
+
 interface ApisearchConfigurationInterface
 {
-    /**
-     * @return string
-     */
     public function getVersion(): string;
 
-    /**
-     * @return string
-     */
-    public function getRepository(): string;
-
-    /**
-     * @return string
-     */
     public function getIndex(): string;
 
-    /**
-     * @return bool
-     */
+    public function getIndexUUID(): IndexUUID;
+
     public function isShowPriceFilter(): bool;
 
-    /**
-     * @return bool
-     */
     public function isShowTextSearch(): bool;
 
-    /**
-     * @return bool
-     */
     public function isEnableAutocomplete(): bool;
 
-    /**
-     * @param string|null $type
-     *
-     * @return array
-     */
     public function getFilters(?string $type = null): array;
 
-    /**
-     * @return array
-     */
     public function getPaginationSize(): array;
 }

@@ -15,9 +15,13 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Command;
 
-use Apisearch\SyliusApisearchPlugin\Populate\PopulateInterface;
-use Apisearch\SyliusApisearchPlugin\Populate\ResettingInterface;
+use Apisearch\SyliusApisearchPlugin\Indexing\PopulateInterface;
+use Apisearch\SyliusApisearchPlugin\Indexing\ResettingInterface;
+use Exception;
+use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository;
+use Sylius\Component\Core\Model\ProductInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,28 +29,30 @@ use Webmozart\Assert\Assert;
 
 class PopulateCommand extends Command
 {
-    /**
-     * @var ResettingInterface
-     */
+    /** @var ResettingInterface */
     private $resetting;
 
-    /**
-     * @var PopulateInterface
-     */
+    /** @var PopulateInterface */
     private $populate;
+
+    /** @var ProductRepository */
+    private $productRepository;
+
+    /** @var array */
+    private $searchProductAttribute = [
+        'enabled' => true,
+    ];
 
     /**
      * PopulateCommand constructor.
-     *
-     * @param ResettingInterface $resetting
-     * @param PopulateInterface $populate
      */
-    public function __construct(ResettingInterface $resetting, PopulateInterface $populate)
-    {
+    public function __construct(ResettingInterface $resetting, PopulateInterface $populate, ProductRepository $productRepository
+) {
         parent::__construct();
 
         $this->resetting = $resetting;
         $this->populate = $populate;
+        $this->productRepository = $productRepository;
     }
 
     protected function configure(): void
@@ -60,10 +66,7 @@ class PopulateCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
@@ -77,6 +80,40 @@ class PopulateCommand extends Command
         }
 
         $output->writeln('Populate index');
-        $this->populate->populate($output, $perPage);
+
+        $countProductsToIndex = $this->productRepository->count(
+            $this->searchProductAttribute
+        );
+
+        Assert::greaterThan($countProductsToIndex, 0);
+
+        $progressBar = new ProgressBar($output, $countProductsToIndex);
+
+        $page = 1;
+        while (true) {
+            $offset = ($page - 1) * $perPage;
+            $model = $this->productRepository->findBy(
+                $this->searchProductAttribute,
+                [],
+                $perPage,
+                $offset
+            );
+
+            if (empty($model)) {
+                $progressBar->finish();
+                $output->writeln('');
+
+                return;
+            }
+
+            /** @var ProductInterface $product */
+            foreach ($model as $product) {
+                $this->populate->populateSingle($product, false);
+                $progressBar->advance();
+            }
+
+            $this->populate->flush();
+            ++$page;
+        }
     }
 }

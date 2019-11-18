@@ -13,16 +13,16 @@
 
 declare(strict_types=1);
 
-namespace Apisearch\SyliusApisearchPlugin\Search;
+namespace Apisearch\SyliusApisearchPlugin\Search\View;
 
+use Exception;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-interface SearchInterface
+class DynamicSearchViewStrategy implements SearchViewStrategyInterface
 {
-    public function getSearchResult(Request $request, TaxonInterface $taxon): SearchResult;
-
-    public function getCurrentPage(Request $request): int;
-
-    public function getCurrentSize(Request $request): int;
+    public function getParameters(Request $request, TaxonInterface $taxon): array
+    {
+        throw new Exception('Dynamic view is not implemented yet.');
+    }
 }

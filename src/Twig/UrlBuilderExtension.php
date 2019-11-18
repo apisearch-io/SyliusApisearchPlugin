@@ -16,20 +16,16 @@ declare(strict_types=1);
 namespace Apisearch\SyliusApisearchPlugin\Twig;
 
 use Apisearch\SyliusApisearchPlugin\Url\UrlBuilder;
-use Twig_Extension;
-use Twig_SimpleFilter;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
-class UrlBuilderExtension extends Twig_Extension
+class UrlBuilderExtension extends AbstractExtension
 {
-    /**
-     * @var UrlBuilder
-     */
+    /** @var UrlBuilder */
     protected $urlBuilder;
 
     /**
      * QueryExtension constructor.
-     *
-     * @param UrlBuilder $urlBuilder
      */
     public function __construct(UrlBuilder $urlBuilder)
     {
@@ -39,17 +35,17 @@ class UrlBuilderExtension extends Twig_Extension
     /**
      * Returns a list of filters to add to the existing list.
      *
-     * @return Twig_SimpleFilter[] An array of filters
+     * @return TwigFilter[] An array of filters
      */
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('add_filter_value', [$this->urlBuilder, 'addFilterValue']),
-            new Twig_SimpleFilter('remove_filter_value', [$this->urlBuilder, 'removeFilterValue']),
-            new Twig_SimpleFilter('remove_price_range_filter', [$this->urlBuilder, 'removePriceRangeFilter']),
-            new Twig_SimpleFilter('add_sort_by', [$this->urlBuilder, 'addSortBy']),
-            new Twig_SimpleFilter('remove_query', [$this->urlBuilder, 'removeQuery']),
-            new Twig_SimpleFilter('change_page_size', [$this->urlBuilder, 'changePageSize']),
+            new TwigFilter('add_filter_value', [$this->urlBuilder, 'addFilterValue']),
+            new TwigFilter('remove_filter_value', [$this->urlBuilder, 'removeFilterValue']),
+            new TwigFilter('remove_price_range_filter', [$this->urlBuilder, 'removePriceRangeFilter']),
+            new TwigFilter('add_sort_by', [$this->urlBuilder, 'addSortBy']),
+            new TwigFilter('remove_query', [$this->urlBuilder, 'removeQuery']),
+            new TwigFilter('change_page_size', [$this->urlBuilder, 'changePageSize']),
         ];
     }
 }

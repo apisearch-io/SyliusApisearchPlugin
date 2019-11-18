@@ -4,7 +4,6 @@ services:
       class: Apisearch\SyliusApisearchPlugin\Controller\TaxonController
       public: true
       arguments:
-       - "@sylius_apisearch.configuration"
-       - "@sylius_apisearch.context.taxon"
-       - "@sylius_apisearch.search.search"
-       - "@templating"
+        - "@templating"
+        - "@sylius_apisearch.search.view.search_view_context"
+        - "@sylius_apisearch.context.taxon"

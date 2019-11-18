@@ -10,7 +10,11 @@ apisearch:
       price:
         asc: Cena rosnąco
         desc: Cena malejąco
+    size:
+        title: Rozmiar
     remove_selected: Usuń filtry
     fields:
       price: Cena
       query: Szukana fraza
+      min_price: Cena minimalna
+      max_price: Cena maksymalna

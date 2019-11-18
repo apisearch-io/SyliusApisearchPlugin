@@ -15,66 +15,42 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Configuration;
 
+use Apisearch\Model\IndexUUID;
 use Apisearch\SyliusApisearchPlugin\Element;
+use function array_filter;
+use function array_values;
+use function count;
+use Exception;
+use function in_array;
 
 class ApisearchConfiguration implements ApisearchConfigurationInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $version;
 
-    /**
-     * @var string
-     */
-    private $repository;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     private $index;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $showPriceFilter;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $showTextSearch;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $enableAutocomplete;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $filters;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $paginationSize;
 
     /**
      * ApisearchConfiguration constructor.
-     *
-     * @param string $version
-     * @param string $repository
-     * @param string $index
-     * @param bool $showPriceFilter
-     * @param bool $showTextSearch
-     * @param bool $enableAutocomplete
-     * @param array $filters
-     * @param array $paginationSize
      */
     public function __construct(
         string $version,
-        string $repository,
-        string $index,
         bool $showPriceFilter,
         bool $showTextSearch,
         bool $enableAutocomplete,
@@ -82,8 +58,7 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
         array $paginationSize
     ) {
         $this->version = $version;
-        $this->repository = $repository;
-        $this->index = $index;
+        $this->index = Element::INDEX_NAME;
         $this->showPriceFilter = $showPriceFilter;
         $this->showTextSearch = $showTextSearch;
         $this->enableAutocomplete = $enableAutocomplete;
@@ -91,81 +66,56 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
         $this->paginationSize = $paginationSize;
     }
 
-    /**
-     * @return string
-     */
     public function getVersion(): string
     {
         return $this->version;
     }
 
-    /**
-     * @return string
-     */
-    public function getRepository(): string
-    {
-        return $this->repository;
-    }
-
-    /**
-     * @return string
-     */
     public function getIndex(): string
     {
         return $this->index;
     }
 
-    /**
-     * @return bool
-     */
+    public function getIndexUUID(): IndexUUID
+    {
+        return IndexUUID::createById($this->index);
+    }
+
     public function isShowPriceFilter(): bool
     {
         return $this->showPriceFilter;
     }
 
-    /**
-     * @return bool
-     */
     public function isShowTextSearch(): bool
     {
         return $this->showTextSearch;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnableAutocomplete(): bool
     {
         return $this->enableAutocomplete;
     }
 
-    /**
-     * @param string|null $type
-     *
-     * @return array
-     */
     public function getFilters(?string $type = null): array
     {
-        if (false === \in_array($type, Element::$filters)) {
+        if (false === in_array($type, Element::$filters)) {
             return $this->filters;
         }
 
-        return \array_filter($this->filters, function (array $filter) use ($type) {
+        return array_filter($this->filters, function (array $filter) use ($type) {
             return $filter['type'] === $type;
         });
     }
 
     /**
-     * @return array
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getPaginationSize(): array
     {
-        if (0 === \count($this->paginationSize)) {
-            throw new \Exception('Pagination size is not set up.');
+        if (0 === count($this->paginationSize)) {
+            throw new Exception('Pagination size is not set up.');
         }
 
-        return \array_values($this->paginationSize);
+        return array_values($this->paginationSize);
     }
 }

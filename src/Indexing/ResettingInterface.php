@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Apisearch\SyliusApisearchPlugin\Populate;
+namespace Apisearch\SyliusApisearchPlugin\Indexing;
 
 interface ResettingInterface
 {

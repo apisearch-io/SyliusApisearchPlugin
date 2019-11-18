@@ -19,43 +19,35 @@ use Apisearch\Query\Filter;
 use Apisearch\Query\Query;
 use Apisearch\Query\SortBy;
 use Apisearch\Repository\TransformableRepository;
-use Apisearch\Result\Result;
 use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
 use Apisearch\SyliusApisearchPlugin\Element;
 use Apisearch\SyliusApisearchPlugin\Url\UrlBuilder;
+use function array_keys;
+use function array_values;
+use function count;
+use function in_array;
+use function round;
+use function sprintf;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Search implements SearchInterface
 {
-    /**
-     * @var TransformableRepository
-     */
+    /** @var TransformableRepository */
     private $repository;
 
-    /**
-     * @var ApisearchConfigurationInterface
-     */
+    /** @var ApisearchConfigurationInterface */
     private $configuration;
 
-    /**
-     * @var UrlBuilder
-     */
+    /** @var UrlBuilder */
     private $urlBuilder;
 
-    /**
-     * @var LocaleContextInterface
-     */
+    /** @var LocaleContextInterface */
     private $localeContext;
 
     /**
      * Search constructor.
-     *
-     * @param TransformableRepository $repository
-     * @param ApisearchConfigurationInterface $configuration
-     * @param UrlBuilder $urlBuilder
-     * @param LocaleContextInterface $localeContext
      */
     public function __construct(
         TransformableRepository $repository,
@@ -69,13 +61,7 @@ class Search implements SearchInterface
         $this->localeContext = $localeContext;
     }
 
-    /**
-     * @param Request $request
-     * @param TaxonInterface $taxon
-     *
-     * @return Result
-     */
-    public function getResult(Request $request, TaxonInterface $taxon): Result
+    public function getSearchResult(Request $request, TaxonInterface $taxon): SearchResult
     {
         $requestQuery = $request->query;
 
@@ -104,7 +90,7 @@ class Search implements SearchInterface
             Element::FIELD_PRICE,
             [],
             [
-                \sprintf(
+                sprintf(
                     '%d..%d',
                     $this->createPriceRequest($request, 'min'),
                     $this->createPriceRequest($request, 'max')
@@ -123,7 +109,7 @@ class Search implements SearchInterface
             $query->filterBy(
                 $filter['name'],
                 $filter['field'],
-                $requestQuery->get($filter['field'], []),
+                $requestQuery->get($filter['name'], []),
                 $filter['precision'],
                 $filter['aggregate'],
                 $filter['aggregation_sort']
@@ -139,76 +125,60 @@ class Search implements SearchInterface
 
         $this->getSort($request, $query);
 
-        return $this->repository->query($query);
+        return new SearchResult(
+            $this->repository->query($query),
+            $query,
+            $this->configuration
+        );
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return int
-     */
     public function getCurrentPage(Request $request): int
     {
         return (int) $request->get('page', Query::DEFAULT_PAGE);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return int
-     */
     public function getCurrentSize(Request $request): int
     {
         $availablePaginationSize = $this->configuration->getPaginationSize();
         $currentSize = (int) $request->get('page_size', $availablePaginationSize[0]);
 
-        return \in_array($currentSize, $availablePaginationSize)
+        return in_array($currentSize, $availablePaginationSize)
             ? $currentSize
             : $availablePaginationSize[0]
         ;
     }
 
-    /**
-     * @param Request $request
-     * @param string $suffix
-     *
-     * @return int
-     */
     private function createPriceRequest(Request $request, string $suffix): int
     {
         $price = (int) $request->get(
-            \sprintf(
+            sprintf(
                 '%s_%s',
                 Element::FIELD_PRICE,
                 $suffix
             ),
-            -1
+            null
         );
 
         return $price > 0
-            ? (int) \round($price * 100, 2)
+            ? (int) round($price * 100, 2)
             : -1
         ;
     }
 
-    /**
-     * @param Request $request
-     * @param Query $query
-     */
     private function getSort(Request $request, Query $query): void
     {
         $sort = SortBy::create();
 
         $sortBy = $request->get('sort_by', []);
-        if (\count($sortBy) <= 0) {
+        if (count($sortBy) <= 0) {
             $sort->byFieldValue(Element::FIELD_ID, SortBy::ASC);
             $query->sortBy($sort);
 
             return;
         }
 
-        $field = \array_keys($sortBy)[0];
-        $direction = \array_values($sortBy)[0];
+        $field = array_keys($sortBy)[0];
+        $direction = array_values($sortBy)[0];
         $direction = $direction == SortBy::ASC
                 ? SortBy::ASC
                 : SortBy::DESC
