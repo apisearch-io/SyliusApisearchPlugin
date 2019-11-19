@@ -15,6 +15,9 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin;
 
+/**
+ * @Todo refactor
+ */
 final class Element
 {
     public const INDEX_NAME = 'products';
