@@ -5,7 +5,8 @@ services:
     arguments:
       - "@sylius_apisearch.indexing.resetting"
       - "@sylius_apisearch.indexing.populate"
-      - "@sylius.repository.product"
+      - "@sylius_apisearch.repository.product"
+      - "@sylius.locale_provider"
     tags:
       - { name: console.command }
 

@@ -17,36 +17,46 @@ namespace Apisearch\SyliusApisearchPlugin\Transformer;
 
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
-use Apisearch\SyliusApisearchPlugin\Element;
+use Apisearch\SyliusApisearchPlugin\Repository\ProductRepositoryInterface;
+use Apisearch\SyliusApisearchPlugin\Transformer\ItemCode\ItemCodeResolver;
 use Apisearch\Transformer\ReadTransformer;
 use Apisearch\Transformer\WriteTransformer;
 use Exception;
-use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository;
+use function sprintf;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 
 class ProductTransformer implements ReadTransformer, WriteTransformer
 {
-    /** @var LocaleContextInterface */
-    private $localeContext;
+    private const PRODUCT_TRANSFORMER_KEY = 'product';
 
-    /** @var ProductRepository */
+    /** @var ProductRepositoryInterface */
     private $productRepository;
 
     /** @var MetadataBuilderInterface */
     private $metadataBuilder;
+
+    /** @var string */
+    private $localeCode;
 
     /**
      * ProductTransformer constructor.
      */
     public function __construct(
         LocaleContextInterface $localeContext,
-        ProductRepository $productRepository,
+        ProductRepositoryInterface $productRepository,
         MetadataBuilderInterface $metadataBuilder
     ) {
-        $this->localeContext = $localeContext;
+        $this->localeCode = $localeContext->getLocaleCode();
         $this->productRepository = $productRepository;
         $this->metadataBuilder = $metadataBuilder;
+    }
+
+    public function setLocaleCode(?string $localeCode): void
+    {
+        if (!empty($localeCode)) {
+            $this->localeCode = $localeCode;
+        }
     }
 
     /**
@@ -62,7 +72,7 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     public function isValidItem(Item $item): bool
     {
-        return $item->getType() === Element::PRODUCT_TRANSFORMER_KEY;
+        return $item->getType() === self::PRODUCT_TRANSFORMER_KEY;
     }
 
     /**
@@ -72,13 +82,15 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     public function fromItem(Item $item)
     {
-        $code = $item->get('code');
+        $itemResolver = ItemCodeResolver::decode($item->getUUID()->getId());
 
-        $product = $this->productRepository->findBy(
-            ['code' => $code]
+        /** @var ProductInterface $product */
+        $product = $this->productRepository->findOneByCodeAndLocale(
+            $itemResolver->getProductCode(),
+            $itemResolver->getLocaleCode()
         );
         if (null === $product) {
-            throw new Exception(sprintf('Product with "%s" code not found', $code));
+            throw new Exception(sprintf('Product with "%s" code not found', $itemResolver->getProductCode()));
         }
 
         return $product;
@@ -91,8 +103,8 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
     {
         /** @var ProductInterface $object */
         return new ItemUUID(
-            $object->getCode(),
-            Element::PRODUCT_TRANSFORMER_KEY
+            ItemCodeResolver::encode($object->getCode(), $this->localeCode),
+            self::PRODUCT_TRANSFORMER_KEY
         );
     }
 
@@ -101,8 +113,6 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     public function toItem($object): Item
     {
-        $localCode = $this->localeContext->getLocaleCode();
-
         /** @var ProductInterface $object */
         return Item::create(
             $this->toItemUUID($object),
@@ -112,9 +122,9 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
                 'slug' => $object->getSlug(),
                 'images' => $object->getImages(),
                 'code' => $object->getCode(),
-                'locale' => $localCode,
+                'locale' => $this->localeCode,
             ],
-            $this->metadataBuilder->build($object, $localCode),
+            $this->metadataBuilder->build($object, $this->localeCode),
             [
                 'name' => $object->getName(),
                 'description' => $object->getDescription(),

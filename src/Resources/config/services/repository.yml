@@ -1,0 +1,6 @@
+services:
+
+    sylius_apisearch.repository.product:
+        class: Apisearch\SyliusApisearchPlugin\Repository\ProductRepository
+        arguments:
+            - "@sylius.repository.product"

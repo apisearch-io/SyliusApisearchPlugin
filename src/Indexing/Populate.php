@@ -42,40 +42,49 @@ class Populate implements PopulateInterface
     /**
      * @throws Exception
      */
-    public function populateSingle(ProductInterface $product, bool $flush = true): void
+    public function populateSingle(ProductInterface $product, ?string $localeCode = null, bool $flush = true): void
     {
-        $product = $this->productTransformer->toItem($product);
+        $transformer = $this->productTransformer;
+        $transformer->setLocaleCode($localeCode);
+
+        $product = $transformer->toItem($product);
         $this->transformableRepository->addItem($product);
 
         if ($flush) {
-            $this->transformableRepository->flush();
+            $this->flush();
         }
     }
 
     /**
      * @throws Exception
      */
-    public function removeSingle(ProductInterface $product, bool $flush = true): void
+    public function removeSingle(ProductInterface $product, ?string $localeCode = null, bool $flush = true): void
     {
-        $product = $this->productTransformer->toItem($product);
+        $transformer = $this->productTransformer;
+        $transformer->setLocaleCode($localeCode);
+
+        $product = $transformer->toItem($product);
         $this->transformableRepository->deleteItem($product->getUUID());
 
         if ($flush) {
-            $this->transformableRepository->flush();
+            $this->flush();
         }
     }
 
     /**
      * @throws Exception
      */
-    public function updateSingle(ProductInterface $product, bool $flush = true): void
+    public function updateSingle(ProductInterface $product, ?string $localeCode = null, bool $flush = true): void
     {
-        $product = $this->productTransformer->toItem($product);
+        $transformer = $this->productTransformer;
+        $transformer->setLocaleCode($localeCode);
+
+        $product = $transformer->toItem($product);
         $this->transformableRepository->deleteItem($product->getUUID());
         $this->transformableRepository->addItem($product);
 
         if ($flush) {
-            $this->transformableRepository->flush();
+            $this->flush();
         }
     }
 

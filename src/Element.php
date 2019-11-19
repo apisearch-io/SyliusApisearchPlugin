@@ -27,20 +27,18 @@ final class Element
 
     public const FIELD_ID = 'id';
 
-    public const FILTER_OPTION = 'option';
-
-    public const FILTER_ATTRIBUTE = 'attribute';
-
     public const VERSION_STATIC = 'static';
 
     public const VERSION_DYNAMIC = 'dynamic';
-
-    public const PRODUCT_TRANSFORMER_KEY = 'product';
 
     public static $versionTemplate = [
         self::VERSION_STATIC => '@SyliusApisearchPlugin/Taxon/static.html.twig',
         self::VERSION_DYNAMIC => '@SyliusApisearchPlugin/Taxon/dynamic.html.twig',
     ];
+
+    public const FILTER_OPTION = 'option';
+
+    public const FILTER_ATTRIBUTE = 'attribute';
 
     public static $filters = [
         self::FILTER_OPTION,

@@ -28,7 +28,7 @@ services:
         class: Apisearch\SyliusApisearchPlugin\Transformer\ProductTransformer
         arguments:
             - "@sylius.context.locale"
-            - "@sylius.repository.product"
+            - "@sylius_apisearch.repository.product"
             - "@sylius_apisearch.transformer.metadata_builder"
         tags:
             - { name: apisearch.write_transformer }

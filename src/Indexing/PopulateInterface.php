@@ -23,17 +23,17 @@ interface PopulateInterface
     /**
      * @throws Exception
      */
-    public function populateSingle(ProductInterface $product, bool $flush = true): void;
+    public function populateSingle(ProductInterface $product, ?string $localeCode = null, bool $flush = true): void;
 
     /**
      * @throws Exception
      */
-    public function removeSingle(ProductInterface $product, bool $flush = true): void;
+    public function removeSingle(ProductInterface $product, ?string $localeCode = null, bool $flush = true): void;
 
     /**
      * @throws Exception
      */
-    public function updateSingle(ProductInterface $product, bool $flush = true): void;
+    public function updateSingle(ProductInterface $product, ?string $localeCode = null, bool $flush = true): void;
 
     /**
      * @throws Exception

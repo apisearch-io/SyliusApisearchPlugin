@@ -45,7 +45,8 @@ class ResetCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $output->writeln('Resetting index');
+        $output->writeln('Resetting product index');
         $this->resetting->reset();
+        $output->writeln('<info>Done</info>');
     }
 }

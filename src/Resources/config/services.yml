@@ -9,3 +9,4 @@ imports:
   - { resource: "services/url.yml" }
   - { resource: "services/transformer.yml" }
   - { resource: "services/twig.yml" }
+  - { resource: "services/repository.yml" }

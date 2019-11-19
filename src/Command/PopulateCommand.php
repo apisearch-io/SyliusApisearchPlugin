@@ -17,9 +17,11 @@ namespace Apisearch\SyliusApisearchPlugin\Command;
 
 use Apisearch\SyliusApisearchPlugin\Indexing\PopulateInterface;
 use Apisearch\SyliusApisearchPlugin\Indexing\ResettingInterface;
+use Apisearch\SyliusApisearchPlugin\Repository\ProductRepositoryInterface;
 use Exception;
-use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository;
+use function sprintf;
 use Sylius\Component\Core\Model\ProductInterface;
+use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,13 +37,11 @@ class PopulateCommand extends Command
     /** @var PopulateInterface */
     private $populate;
 
-    /** @var ProductRepository */
+    /** @var ProductRepositoryInterface */
     private $productRepository;
 
-    /** @var array */
-    private $searchProductAttribute = [
-        'enabled' => true,
-    ];
+    /** @var LocaleProviderInterface */
+    private $localeProvider;
 
     /**
      * PopulateCommand constructor.
@@ -49,13 +49,15 @@ class PopulateCommand extends Command
     public function __construct(
         ResettingInterface $resetting,
         PopulateInterface $populate,
-        ProductRepository $productRepository)
-    {
+        ProductRepositoryInterface $productRepository,
+        LocaleProviderInterface $localeProvider
+    ) {
         parent::__construct();
 
         $this->resetting = $resetting;
         $this->populate = $populate;
         $this->productRepository = $productRepository;
+        $this->localeProvider = $localeProvider;
     }
 
     protected function configure(): void
@@ -64,7 +66,7 @@ class PopulateCommand extends Command
             ->setName('apisearch:sylius:populate')
             ->addOption('no-reset', null, InputOption::VALUE_NONE, 'Do not reset index before populating')
             ->addOption('max-per-page', null, InputOption::VALUE_REQUIRED, 'The pager\'s page size', 100)
-            ->setDescription('Populates product index')
+            ->setDescription('Populate product index')
         ;
     }
 
@@ -78,45 +80,44 @@ class PopulateCommand extends Command
 
         $reset = !$input->getOption('no-reset');
         if ($reset) {
-            $output->writeln('Resetting index');
+            $output->writeln('Resetting product index');
             $this->resetting->reset();
+            $output->writeln(['<info>Done</info>', '']);
         }
 
-        $output->writeln('Populate index');
+        $output->writeln('Populate product index');
 
-        $countProductsToIndex = $this->productRepository->count(
-            $this->searchProductAttribute
-        );
+        foreach ($this->localeProvider->getAvailableLocalesCodes() as $locale) {
+            $output->writeln(sprintf('<options=bold,underscore>Locale "%s"</>', $locale));
 
-        Assert::greaterThan($countProductsToIndex, 0);
-
-        $progressBar = new ProgressBar($output, $countProductsToIndex);
-
-        $page = 1;
-        while (true) {
-            $offset = ($page - 1) * $perPage;
-            $model = $this->productRepository->findBy(
-                $this->searchProductAttribute,
-                [],
-                $perPage,
-                $offset
+            $progressBar = new ProgressBar(
+                $output,
+                $this->productRepository->countEnabledByLocale($locale)
             );
 
-            if (empty($model)) {
-                $progressBar->finish();
-                $output->writeln('');
+            $page = 1;
+            while (true) {
+                $offset = ($page - 1) * $perPage;
+                $model = $this->productRepository->findEnabledByLocale($locale, $perPage, $offset);
 
-                return;
+                if (empty($model)) {
+                    $progressBar->finish();
+                    $output->writeln(['', '']);
+
+                    break;
+                }
+
+                /** @var ProductInterface $product */
+                foreach ($model as $product) {
+                    $this->populate->populateSingle($product, $locale, false);
+                    $progressBar->advance();
+                }
+
+                $this->populate->flush();
+                ++$page;
             }
-
-            /** @var ProductInterface $product */
-            foreach ($model as $product) {
-                $this->populate->populateSingle($product, false);
-                $progressBar->advance();
-            }
-
-            $this->populate->flush();
-            ++$page;
         }
+
+        $output->writeln('<info>Done</info>');
     }
 }
