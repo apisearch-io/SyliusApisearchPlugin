@@ -1,11 +1,35 @@
 services:
 
-  sylius_apisearch.transformer.product:
-    class: Apisearch\SyliusApisearchPlugin\Transformer\ProductTransformer
-    arguments:
-      - "@sylius_apisearch.configuration"
-      - "@sylius.context.locale"
-      - "@sylius.repository.product"
-    tags:
-      - { name: apisearch.write_transformer }
-      - { name: apisearch.read_transformer }
+    sylius_apisearch.transformer.metadata.price:
+        class: Apisearch\SyliusApisearchPlugin\Transformer\Metadata\PriceMetadata
+
+    sylius_apisearch.transformer.metadata.taxon:
+        class: Apisearch\SyliusApisearchPlugin\Transformer\Metadata\TaxonMetadata
+        
+    sylius_apisearch.transformer.metadata.attribute:
+        class: Apisearch\SyliusApisearchPlugin\Transformer\Metadata\AttributeMetadata
+        arguments:
+            - "@sylius_apisearch.configuration"
+
+    sylius_apisearch.transformer.metadata.option:
+        class: Apisearch\SyliusApisearchPlugin\Transformer\Metadata\OptionMetadata
+        arguments:
+            - "@sylius_apisearch.configuration"
+            
+    sylius_apisearch.transformer.metadata_builder:
+        class: Apisearch\SyliusApisearchPlugin\Transformer\MetadataBuilder
+        arguments:
+            - "@sylius_apisearch.transformer.metadata.price"
+            - "@sylius_apisearch.transformer.metadata.taxon"
+            - "@sylius_apisearch.transformer.metadata.attribute"
+            - "@sylius_apisearch.transformer.metadata.option"
+
+    sylius_apisearch.transformer.product:
+        class: Apisearch\SyliusApisearchPlugin\Transformer\ProductTransformer
+        arguments:
+            - "@sylius.context.locale"
+            - "@sylius.repository.product"
+            - "@sylius_apisearch.transformer.metadata_builder"
+        tags:
+            - { name: apisearch.write_transformer }
+            - { name: apisearch.read_transformer }

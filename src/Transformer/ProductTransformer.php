@@ -17,41 +17,36 @@ namespace Apisearch\SyliusApisearchPlugin\Transformer;
 
 use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
-use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
 use Apisearch\SyliusApisearchPlugin\Element;
 use Apisearch\Transformer\ReadTransformer;
 use Apisearch\Transformer\WriteTransformer;
-use function array_column;
-use function array_merge;
 use Exception;
-use function in_array;
 use Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRepository;
-use Sylius\Component\Core\Model\ChannelPricingInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 
 class ProductTransformer implements ReadTransformer, WriteTransformer
 {
-    /** @var ApisearchConfigurationInterface */
-    protected $configuration;
-
     /** @var LocaleContextInterface */
     private $localeContext;
 
     /** @var ProductRepository */
     private $productRepository;
 
+    /** @var MetadataBuilderInterface */
+    private $metadataBuilder;
+
     /**
      * ProductTransformer constructor.
      */
     public function __construct(
-        ApisearchConfigurationInterface $configuration,
         LocaleContextInterface $localeContext,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        MetadataBuilderInterface $metadataBuilder
     ) {
-        $this->configuration = $configuration;
         $this->localeContext = $localeContext;
         $this->productRepository = $productRepository;
+        $this->metadataBuilder = $metadataBuilder;
     }
 
     /**
@@ -77,11 +72,13 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     public function fromItem(Item $item)
     {
+        $code = $item->get('code');
+
         $product = $this->productRepository->findBy(
-            ['code' => $item->get('code')]
+            ['code' => $code]
         );
         if (null === $product) {
-            throw new Exception();
+            throw new Exception(sprintf('Product with "%s" code not found', $code));
         }
 
         return $product;
@@ -103,6 +100,8 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     public function toItem($object): Item
     {
+        $localCode = $this->localeContext->getLocaleCode();
+
         /** @var ProductInterface $object */
         return Item::create(
             $this->toItemUUID($object),
@@ -112,113 +111,13 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
                 'slug' => $object->getSlug(),
                 'images' => $object->getImages(),
                 'code' => $object->getCode(),
-                'locale' => $this->localeContext->getLocaleCode(),
+                'locale' => $localCode,
             ],
-            array_merge(
-                [
-                    Element::FIELD_LOCALE => $this->localeContext->getLocaleCode(),
-                    Element::FIELD_TAXON_CODE => $this->getTaxons($object),
-                    Element::FIELD_PRICE => $this->getPrices($object),
-                    Element::FIELD_ID => $object->getId(),
-                ],
-                $this->getOptions($object),
-                $this->getAttributes($object)
-            ),
+            $this->metadataBuilder->build($object, $localCode),
             [
                 'name' => $object->getName(),
                 'description' => $object->getDescription(),
             ]
         );
-    }
-
-    private function getTaxons(ProductInterface $product): array
-    {
-        $indexTaxons = [];
-
-        $mainTaxon = $product->getMainTaxon();
-        if (null !== $mainTaxon) {
-            $indexTaxons[] = $mainTaxon->getCode();
-        }
-
-        $otherTaxons = $product->getTaxons();
-        if ($otherTaxons->count() > 0) {
-            foreach ($otherTaxons as $taxon) {
-                $indexTaxons[] = $taxon->getCode();
-            }
-        }
-
-        return $indexTaxons;
-    }
-
-    private function getPrices(ProductInterface $product): array
-    {
-        if (0 === $product->getVariants()->count()) {
-            return [];
-        }
-
-        $indexPrices = [];
-        foreach ($product->getVariants() as $variant) {
-            /** @var ChannelPricingInterface $channelPricing */
-            foreach ($variant->getChannelPricings() as $channelPricing) {
-                $indexPrices[] = $channelPricing->getPrice();
-            }
-        }
-
-        return $indexPrices;
-    }
-
-    private function getOptions(ProductInterface $product): array
-    {
-        $variants = $product->getVariants();
-        if (null === $variants) {
-            return [];
-        }
-
-        $configurationOptions = array_column(
-            $this->configuration->getFilters(Element::FILTER_OPTION),
-            'field'
-        );
-
-        $indexOptions = [];
-        foreach ($variants as $variant) {
-            $options = $variant->getOptionValues();
-            if (0 === $options->count()) {
-                continue;
-            }
-
-            foreach ($options as $option) {
-                $optionCode = $option->getOptionCode();
-                if (!in_array($optionCode, $configurationOptions)) {
-                    continue;
-                }
-
-                $indexOptions[$optionCode][] = $option->getValue();
-            }
-        }
-
-        return $indexOptions;
-    }
-
-    private function getAttributes(ProductInterface $product): array
-    {
-        $attributes = $product->getAttributes();
-        if (null === $attributes) {
-            return [];
-        }
-
-        $configurationAttributes = array_column(
-            $this->configuration->getFilters(Element::FILTER_ATTRIBUTE),
-            'field'
-        );
-
-        $indexAttributes = [];
-        foreach ($attributes as $attribute) {
-            $code = $attribute->getCode();
-            if (in_array($code, $configurationAttributes)) {
-                $indexAttributes[$code] = $attribute->getValue();
-            }
-        }
-
-        return $indexAttributes;
     }
 }
