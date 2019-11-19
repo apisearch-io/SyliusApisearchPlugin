@@ -89,6 +89,7 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
      */
     public function toItemUUID($object): ItemUUID
     {
+        /** @var ProductInterface $object */
         return new ItemUUID(
             $object->getCode(),
             Element::PRODUCT_TRANSFORMER_KEY

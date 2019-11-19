@@ -15,28 +15,23 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Indexing;
 
+use Exception;
 use Sylius\Component\Core\Model\ProductInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 interface PopulateInterface
 {
     /**
-     * @throws \Exception
-     */
-    public function populate(OutputInterface $output, int $perPage): void;
-
-    /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function populateSingle(ProductInterface $product, bool $flush = true): void;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function removeSingle(ProductInterface $product, bool $flush = true): void;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateSingle(ProductInterface $product, bool $flush = true): void;
 

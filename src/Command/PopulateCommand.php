@@ -46,8 +46,11 @@ class PopulateCommand extends Command
     /**
      * PopulateCommand constructor.
      */
-    public function __construct(ResettingInterface $resetting, PopulateInterface $populate, ProductRepository $productRepository
-) {
+    public function __construct(
+        ResettingInterface $resetting,
+        PopulateInterface $populate,
+        ProductRepository $productRepository)
+    {
         parent::__construct();
 
         $this->resetting = $resetting;

@@ -19,7 +19,6 @@ use Apisearch\Repository\TransformableRepository;
 use Apisearch\SyliusApisearchPlugin\Transformer\ProductTransformer;
 use Exception;
 use Sylius\Component\Core\Model\ProductInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class Populate implements PopulateInterface
 {
@@ -38,13 +37,6 @@ class Populate implements PopulateInterface
     ) {
         $this->transformableRepository = $transformableRepository;
         $this->productTransformer = $productTransformer;
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function populate(OutputInterface $output, int $perPage): void
-    {
     }
 
     /**
