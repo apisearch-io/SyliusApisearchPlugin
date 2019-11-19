@@ -15,10 +15,19 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin;
 
+use Apisearch\ApisearchBundle;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Mmoreram\BaseBundle\BaseBundle;
+use Symfony\Component\HttpKernel\KernelInterface;
 
-final class SyliusApisearchPlugin extends Bundle
+final class SyliusApisearchPlugin extends BaseBundle
 {
     use SyliusPluginTrait;
+
+    public static function getBundleDependencies(KernelInterface $kernel): array
+    {
+        return [
+            ApisearchBundle::class,
+        ];
+    }
 }
