@@ -1,0 +1,88 @@
+.as-autocomplete {
+    outline: none;
+    border-radius: 5rem;
+    border: 1px solid gainsboro;
+    font-size: 1.2rem;
+    padding: .5rem;
+    box-shadow: 0 2px 0 #d2d2d2;
+    color: #292935;
+    max-width: 30rem;
+    width: 100%;
+    display: block;
+    margin: 3rem auto 1rem;
+}
+#apisearch-listbox {
+    border: 1px solid
+    #eaeaea;
+    box-shadow: 0 4px 9px
+    rgba(160, 160, 160, 0.21);
+    border-radius: .3rem;
+    max-width: 50rem;
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+    position: absolute;
+    z-index: 1000;
+    background: #FFF;
+    top: 39px;
+}
+
+.as-result__datasetHeader {
+    padding: 13px;
+}
+
+.as-result__dataset {
+    margin-bottom: 2rem;
+}
+.as-result__datasetItemsList, .as-result__datasetItem {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.as-result__datasetItemsList .as-result__datasetItem {
+    height: 2.0rem;
+    line-height: 2.0rem;
+    margin-bottom: .5rem;
+}
+.as-result__datasetItemsList .as-result__datasetItem--active {
+    background: rgb(224, 255, 242);
+}
+.as-result__datasetItemsList .as-result__datasetItem a {
+    color: #365067;
+    font-size: .9rem;
+    text-decoration: none;
+    padding: 0 1rem;
+    display: block;
+    height: inherit;
+}
+.as-result__datasetItemsList .as-result__datasetItem a span {
+    display: block;
+    max-width: inherit;
+    font-size: .7rem;
+    color: grey;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.as-result__datasetItemsList .as-result__datasetItem a:hover {
+    background: rgb(224, 255, 242);
+}
+.as-result__datasetItemsList .as-result__datasetItem a em {
+    font-weight: 600;
+    background: rgba(50,255,173,.16);
+    box-shadow: 0 2px 0 0 #0ce999;
+    font-style: initial;
+}
+.as-poweredBy {
+    padding: .5rem 1rem;
+    border-top: 1px solid #f2f2f2;
+    text-align: right;
+    margin-top: 1rem;
+}
+
+.itemTitle {
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
+    height: 40px;
+}

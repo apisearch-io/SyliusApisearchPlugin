@@ -50,6 +50,19 @@ final class SyliusApisearchExtension extends BaseExtension
 
     protected function postLoad(array $config, ContainerBuilder $container)
     {
+        $apisearchRepository = $container->getParameter('apisearch.repository_configuration');
+        if (
+            isset($apisearchRepository[Element::INDEX_NAME], $apisearchRepository[Element::INDEX_NAME]['token'],$apisearchRepository[Element::INDEX_NAME]['endpoint'])
+        ) {
+            $token = $container->resolveEnvPlaceholders($apisearchRepository[Element::INDEX_NAME]['token'], true);
+            $endpoint = $container->resolveEnvPlaceholders($apisearchRepository[Element::INDEX_NAME]['endpoint'], true);
+            $appId = $apisearchRepository[Element::INDEX_NAME]['app_id'];
+
+            $container->setParameter('sylius_apisearch.config.token', $token);
+            $container->setParameter('sylius_apisearch.config.endpoint', $endpoint);
+            $container->setParameter('sylius_apisearch.config.app_id', $appId);
+        }
+
         $container->setAlias(
             'sylius_apisearch.repository',
             sprintf('apisearch.repository_transformable_%1$s.%1$s', Element::INDEX_NAME)

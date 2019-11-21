@@ -8,3 +8,6 @@ services:
     - "%sylius_apisearch.config.enable_autocomplete%"
     - "%sylius_apisearch.config.filters%"
     - "%sylius_apisearch.config.pagination_size%"
+    - "%sylius_apisearch.config.token%"
+    - "%sylius_apisearch.config.endpoint%"
+    - "%sylius_apisearch.config.app_id%"

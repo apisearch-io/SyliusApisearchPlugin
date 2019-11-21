@@ -6,6 +6,11 @@
 {% import '@SyliusUi/Macro/messages.html.twig' as messages %}
 {% import '@SyliusUi/Macro/pagination.html.twig' as pagination %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {% include '@SyliusUi/_stylesheets.html.twig' with {'path': 'bundles/syliusapisearchplugin/css/apisearch.css'} %}
+{% endblock %}
+
 {% block content %}
     {% include '@SyliusShop/Product/Index/_header.html.twig' %}
     <div class="ui stackable grid">
@@ -44,6 +49,7 @@
                             <div class="item">
                                 <div class="ui fluid input">
                                     <input class="apisearch--query"
+                                           autocomplete="off"
                                            placeholder="{{ 'apisearch.ui.fields.query' | trans }}"
                                            type="text"
                                            value="{{ app.request.get('q') | trim }}"

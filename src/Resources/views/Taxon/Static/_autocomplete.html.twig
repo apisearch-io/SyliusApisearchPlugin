@@ -1,32 +1,36 @@
 {% if configuration.isEnableAutocomplete() %}
 
-    {# @TODO Autocomplete plugin not working #}
-    {# http://0.0.0.0:8100/v1?app_id=sylius&index=products&token=0e4d75ba-c640-44c1-a745-06ee51db4e93&query= #}
-    {# http://0.0.0.0:8100/v1/sylius?index=products&token=0e4d75ba-c640-44c1-a745-06ee51db4e93&query= #}
-    {# Cause by bad endpoint #}
+    {# <script src="https://cdn.jsdelivr.net/npm/apisearch-autocomplete@0.1.6/dist/apisearch-autocomplete.min.js"></script> #}
 
-    <script src="https://cdn.jsdelivr.net/npm/apisearch-autocomplete/dist/apisearch-autocomplete.min.js"></script>
+    <script src="https://raw.githack.com/apisearch-io/autocomplete-ui/7d47953321e4b63e72448e4243ed2a9bcbcbf8f3/dist/apisearch-autocomplete.js"></script>
     <script type="text/javascript">
         const autocomplete = apisearchAutocomplete({
-            appId: 'sylius',
-            indexId: '{{ configuration.getIndex() }}',
-            token: '0e4d75ba-c640-44c1-a745-06ee51db4e93',
+            app_id: '{{ configuration.getAppId() }}',
+            index_id: '{{ configuration.getIndex() }}',
+            token: '{{ configuration.getToken() }}',
             options: {
-                endpoint: 'http://0.0.0.0:8100'
+                endpoint: '{{ configuration.getEndpoint() }}'
             }
         });
 
         {% verbatim %}
+        const itemTemplate = '<a href="/{{metadata.slug}}">' +
+            '{{#highlights.name}}{{{highlights.name}}}{{/highlights.name}}' +
+            '{{^highlights.name}}{{metadata.name}}{{/highlights.name}}' +
+            '</a>';
+        {% endverbatim %}
+
         autocomplete({
             inputTarget: '.apisearch--query',
+            poweredBy: true,
+            itemsPerResult: 4,
             datasets: [{
                 type: 'product',
                 template: {
-                    header: '<h3>Products</h3>',
-                    item: '<a href="">{{metadata.name}}</a>'
+                    header: '<h3>{{ 'sylius.ui.products' | trans }}</h3>',
+                    item: itemTemplate
                 }
             }]
         });
-        {% endverbatim %}
     </script>
 {% endif %}

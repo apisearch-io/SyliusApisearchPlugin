@@ -34,4 +34,10 @@ interface ApisearchConfigurationInterface
     public function getFilters(?string $type = null): array;
 
     public function getPaginationSize(): array;
+
+    public function getToken(): string;
+
+    public function getEndpoint(): string;
+
+    public function getAppId(): string;
 }

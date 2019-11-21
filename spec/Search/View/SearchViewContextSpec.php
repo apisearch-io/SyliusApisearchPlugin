@@ -25,7 +25,7 @@ class SearchViewContextSpec extends ObjectBehavior
 {
     function let(SearchInterface $search): void
     {
-        $configuration = new ApisearchConfiguration('static', true, true, true, [], []);
+        $configuration = new ApisearchConfiguration('static', true, true, true, [], [], '', '', '');
 
         $this->beConstructedWith($configuration, $search);
     }
@@ -37,7 +37,7 @@ class SearchViewContextSpec extends ObjectBehavior
 
     function it_throws_exception_if_view_mode_is_unavailable(SearchInterface $search): void
     {
-        $configuration = new ApisearchConfiguration('others', true, true, true, [], []);
+        $configuration = new ApisearchConfiguration('others', true, true, true, [], [], '', '', '');
         $this->beConstructedWith($configuration, $search);
 
         $this->shouldThrow(VersionUnavailableException::class)->during('__construct', [$configuration, $search]);

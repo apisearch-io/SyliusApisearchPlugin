@@ -46,6 +46,15 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
     /** @var array */
     private $paginationSize;
 
+    /** @var string */
+    private $token;
+
+    /** @var string */
+    private $endpoint;
+
+    /** @var string */
+    private $appId;
+
     /**
      * ApisearchConfiguration constructor.
      */
@@ -55,7 +64,10 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
         bool $showTextSearch,
         bool $enableAutocomplete,
         array $filters,
-        array $paginationSize
+        array $paginationSize,
+        string $token,
+        string $endpoint,
+        string $appId
     ) {
         $this->version = $version;
         $this->index = Element::INDEX_NAME;
@@ -64,6 +76,9 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
         $this->enableAutocomplete = $enableAutocomplete;
         $this->filters = $filters;
         $this->paginationSize = $paginationSize;
+        $this->token = $token;
+        $this->endpoint = $endpoint;
+        $this->appId = $appId;
     }
 
     public function getVersion(): string
@@ -117,5 +132,20 @@ class ApisearchConfiguration implements ApisearchConfigurationInterface
         }
 
         return array_values($this->paginationSize);
+    }
+
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    public function getEndpoint(): string
+    {
+        return $this->endpoint;
+    }
+
+    public function getAppId(): string
+    {
+        return $this->appId;
     }
 }

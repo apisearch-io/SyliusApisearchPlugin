@@ -24,12 +24,18 @@ services:
             - "@sylius_apisearch.transformer.metadata.attribute"
             - "@sylius_apisearch.transformer.metadata.option"
 
+    sylius_apisearch.transformer.resolver.slug:
+        class: Apisearch\SyliusApisearchPlugin\Transformer\Resolver\SlugResolver
+        arguments:
+            - "@router.default"
+
     sylius_apisearch.transformer.product:
         class: Apisearch\SyliusApisearchPlugin\Transformer\ProductTransformer
         arguments:
             - "@sylius.context.locale"
             - "@sylius_apisearch.repository.product"
             - "@sylius_apisearch.transformer.metadata_builder"
+            - "@sylius_apisearch.transformer.resolver.slug"
         tags:
             - { name: apisearch.write_transformer }
             - { name: apisearch.read_transformer }

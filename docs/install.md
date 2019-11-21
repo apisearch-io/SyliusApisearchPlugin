@@ -12,7 +12,7 @@ Next go into `config/packages` and create file `apisearch.yaml` with example con
 ```yaml
 parameters:
     env(APISEARCH_TOKEN): '0e4d75ba-c640-44c1-a745-06ee51db4e93'
-    env(APISEARCH_HOST): 'dockerhost:8100'
+    env(APISEARCH_HOST): 'http://0.0.0.0:8100'
 
 apisearch:
     repositories:

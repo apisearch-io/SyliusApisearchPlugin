@@ -47,7 +47,11 @@ class ApisearchConfigurationSpec extends ObjectBehavior
                 1,
                 2,
                 3,
-            ]);
+            ],
+            'token',
+            'endpoint',
+            'app_id'
+        );
     }
 
     function it_is_initializable(): void
@@ -141,7 +145,7 @@ class ApisearchConfigurationSpec extends ObjectBehavior
 
     function it_throws_exception_if_pagination_size_is_not_set_up(): void
     {
-        $this->beConstructedWith('static', true, true, true, [], []);
+        $this->beConstructedWith('static', true, true, true, [], [], '', '', '');
 
         $this->shouldThrow(Exception::class)->during('getPaginationSize');
     }

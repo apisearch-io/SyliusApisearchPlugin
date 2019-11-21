@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Apisearch\SyliusApisearchPlugin;
 
 use Apisearch\ApisearchBundle;
-use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
 use Mmoreram\BaseBundle\BaseBundle;
+use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 final class SyliusApisearchPlugin extends BaseBundle

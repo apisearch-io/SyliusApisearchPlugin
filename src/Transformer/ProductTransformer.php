@@ -19,6 +19,7 @@ use Apisearch\Model\Item;
 use Apisearch\Model\ItemUUID;
 use Apisearch\SyliusApisearchPlugin\Repository\ProductRepositoryInterface;
 use Apisearch\SyliusApisearchPlugin\Transformer\ItemCode\ItemCodeResolver;
+use Apisearch\SyliusApisearchPlugin\Transformer\Resolver\ResolverInterface;
 use Apisearch\Transformer\ReadTransformer;
 use Apisearch\Transformer\WriteTransformer;
 use Exception;
@@ -39,17 +40,22 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
     /** @var string */
     private $localeCode;
 
+    /** @var ResolverInterface */
+    private $slugResolver;
+
     /**
      * ProductTransformer constructor.
      */
     public function __construct(
         LocaleContextInterface $localeContext,
         ProductRepositoryInterface $productRepository,
-        MetadataBuilderInterface $metadataBuilder
+        MetadataBuilderInterface $metadataBuilder,
+        ResolverInterface $slugResolver
     ) {
         $this->localeCode = $localeContext->getLocaleCode();
         $this->productRepository = $productRepository;
         $this->metadataBuilder = $metadataBuilder;
+        $this->slugResolver = $slugResolver;
     }
 
     public function setLocaleCode(?string $localeCode): void
@@ -119,7 +125,7 @@ class ProductTransformer implements ReadTransformer, WriteTransformer
             [
                 'name' => $object->getName(),
                 'description' => $object->getDescription(),
-                'slug' => $object->getSlug(),
+                'slug' => $this->slugResolver->resolve($object, $this->localeCode),
                 'images' => $object->getImages(),
                 'code' => $object->getCode(),
                 'locale' => $this->localeCode,
