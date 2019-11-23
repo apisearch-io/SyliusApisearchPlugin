@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Apisearch\SyliusApisearchPlugin;
 
 /**
- * @Todo refactor
+ * @Todo remove this class and move to configuration
  */
 final class Element
 {
