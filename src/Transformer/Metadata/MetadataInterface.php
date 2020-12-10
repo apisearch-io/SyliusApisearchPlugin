@@ -13,9 +13,12 @@
 
 declare(strict_types=1);
 
-namespace Apisearch\SyliusApisearchPlugin\Populate;
+namespace Apisearch\SyliusApisearchPlugin\Transformer\Metadata;
 
-interface ResettingInterface
+use Generator;
+use Sylius\Component\Core\Model\ProductInterface;
+
+interface MetadataInterface
 {
-    public function reset(): void;
+    public function getMetadata(ProductInterface $product): Generator;
 }

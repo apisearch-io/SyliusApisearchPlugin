@@ -1,0 +1,36 @@
+{% if configuration.isEnableAutocomplete() %}
+
+    {# <script src="https://cdn.jsdelivr.net/npm/apisearch-autocomplete@0.1.6/dist/apisearch-autocomplete.min.js"></script> #}
+
+    <script src="https://raw.githack.com/apisearch-io/autocomplete-ui/7d47953321e4b63e72448e4243ed2a9bcbcbf8f3/dist/apisearch-autocomplete.js"></script>
+    <script type="text/javascript">
+        const autocomplete = apisearchAutocomplete({
+            app_id: '{{ configuration.getAppId() }}',
+            index_id: '{{ configuration.getIndex() }}',
+            token: '{{ configuration.getToken() }}',
+            options: {
+                endpoint: '{{ configuration.getEndpoint() }}'
+            }
+        });
+
+        {% verbatim %}
+        const itemTemplate = '<a href="/{{metadata.slug}}">' +
+            '{{#highlights.name}}{{{highlights.name}}}{{/highlights.name}}' +
+            '{{^highlights.name}}{{metadata.name}}{{/highlights.name}}' +
+            '</a>';
+        {% endverbatim %}
+
+        autocomplete({
+            inputTarget: '.apisearch--query',
+            poweredBy: true,
+            itemsPerResult: 4,
+            datasets: [{
+                type: 'product',
+                template: {
+                    header: '<h3>{{ 'sylius.ui.products' | trans }}</h3>',
+                    item: itemTemplate
+                }
+            }]
+        });
+    </script>
+{% endif %}

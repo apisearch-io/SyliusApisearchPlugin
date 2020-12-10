@@ -15,22 +15,18 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Command;
 
-use Apisearch\SyliusApisearchPlugin\Populate\ResettingInterface;
+use Apisearch\SyliusApisearchPlugin\Indexing\ResettingInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ResetCommand extends Command
 {
-    /**
-     * @var ResettingInterface
-     */
+    /** @var ResettingInterface */
     private $resetting;
 
     /**
      * ResetCommand constructor.
-     *
-     * @param ResettingInterface $resetting
      */
     public function __construct(ResettingInterface $resetting)
     {
@@ -43,17 +39,14 @@ class ResetCommand extends Command
     {
         $this
             ->setName('apisearch:sylius:reset')
-            ->setDescription('Reset product index')
+            ->setDescription('Reset products index')
         ;
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $output->writeln('Resetting index');
+        $output->writeln('Resetting product index');
         $this->resetting->reset();
+        $output->writeln('<info>Done</info>');
     }
 }

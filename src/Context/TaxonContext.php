@@ -19,43 +19,23 @@ use Apisearch\SyliusApisearchPlugin\Exception\TaxonNotFoundException;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class TaxonContext implements TaxonContextInterface
 {
-    /**
-     * @var TaxonRepositoryInterface
-     */
+    /** @var TaxonRepositoryInterface */
     private $taxonRepository;
 
-    /**
-     * @var LocaleContextInterface
-     */
+    /** @var LocaleContextInterface */
     private $localeContext;
 
-    /**
-     * @param TaxonRepositoryInterface $taxonRepository
-     * @param LocaleContextInterface $localeContext
-     */
     public function __construct(TaxonRepositoryInterface $taxonRepository, LocaleContextInterface $localeContext)
     {
         $this->taxonRepository = $taxonRepository;
         $this->localeContext = $localeContext;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return TaxonInterface
-     */
-    public function findByRequest(Request $request): TaxonInterface
+    public function findBySlug(string $slug): TaxonInterface
     {
-        $slug = $request->get('slug', null);
-
-        if (null === $slug) {
-            throw new TaxonNotFoundException();
-        }
-
         $localeCode = $this->localeContext->getLocaleCode();
         $taxon = $this->taxonRepository->findOneBySlug($slug, $localeCode);
 

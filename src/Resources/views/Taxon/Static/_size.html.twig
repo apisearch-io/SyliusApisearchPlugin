@@ -1,0 +1,18 @@
+{% macro printSize(result) %}
+
+    {% import _self as _order %}
+
+    <div class="ui compact menu">
+        <div class="ui simple dropdown item">
+            {{ 'apisearch.ui.size.title' | trans }}
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                {% for size in result.getConfiguration().getPaginationSize() %}
+                    <div class="item" onclick="location.href='{{ result | change_page_size(size) }}'">
+                        {{ size }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endmacro printSize %}

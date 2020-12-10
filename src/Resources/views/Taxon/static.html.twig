@@ -2,8 +2,14 @@
 
 {% import "@SyliusApisearchPlugin/Taxon/Static/_aggregations.html.twig" as _aggregations %}
 {% import "@SyliusApisearchPlugin/Taxon/Static/_sort.html.twig" as _sort %}
+{% import "@SyliusApisearchPlugin/Taxon/Static/_size.html.twig" as _size %}
 {% import '@SyliusUi/Macro/messages.html.twig' as messages %}
 {% import '@SyliusUi/Macro/pagination.html.twig' as pagination %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% include '@SyliusUi/_stylesheets.html.twig' with {'path': 'bundles/syliusapisearchplugin/css/apisearch.css'} %}
+{% endblock %}
 
 {% block content %}
     {% include '@SyliusShop/Product/Index/_header.html.twig' %}
@@ -16,53 +22,58 @@
                     {{ 'apisearch.ui.filters'|trans }}
                 </div>
 
-                {% for filter in configuration.getFilters() %}
-                    {{ _aggregations.printAggregation(result, filter['field']) }}
+                {% for filter in result.getConfiguration().getFilters() %}
+                    {{ _aggregations.printAggregation(result, filter['name']) }}
                 {% endfor %}
 
-                {{ _aggregations.printPriceRange(result) }}
+                {% if result.getConfiguration().isShowPriceFilter() %}
+                 {{ _aggregations.printPriceRange(result) }}
+                {% endif %}
             </div>
         </div>
         <div class="twelve wide column">
             <div class="ui segment">
                 <div class="ui stackable grid">
-                    <div class="three wide column">
+                    <div class="two wide column">
                         <div class="item">
                             {{ _sort.printOrderBy(result) }}
-
-                            <a href="{{ result | change_page_size(120) }}">
-                                120
-                            </a>
-
-                            <a href="{{ result | change_page_size(180) }}">
-                                180
-                            </a>
-
                         </div>
                     </div>
-                    <div class="seven wide column">
+                    <div class="two wide column">
                         <div class="item">
-                            <div class="ui fluid input">
-                                <input class="apisearch--query" placeholder="{{ 'apisearch.ui.fields.query' | trans }}" type="text" value="{{ app.request.get('q') | trim }}"
-                                       name="q">
+                            {{ _size.printSize(result) }}
+                        </div>
+                    </div>
+                    {% if result.getConfiguration().isShowTextSearch() %}
+                        <div class="seven wide column">
+                            <div class="item">
+                                <div class="ui fluid input">
+                                    <input class="apisearch--query"
+                                           autocomplete="off"
+                                           placeholder="{{ 'apisearch.ui.fields.query' | trans }}"
+                                           type="text"
+                                           value="{{ app.request.get('q') | trim }}"
+                                           name="q">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="three wide column">
-                        <div class="ui buttons">
-                            <button type="submit" data-target=".apisearch--query" data-url="{{ result | remove_query }}" class="ui primary icon labeled button apisearch--search-button">
-                                <i class="search icon"></i> {{ 'sylius.ui.search'|trans }}</button>
-                            <a href="{{ result | remove_query }}"
-                               class="ui negative icon labeled button">
-                                <i class="cancel icon"></i> {{ 'sylius.ui.clear'|trans }}
-                            </a>
+                        <div class="three wide column">
+                            <div class="ui buttons">
+                                <button type="submit" data-target=".apisearch--query" data-url="{{ result | remove_query }}" class="ui primary icon labeled button apisearch--search-button">
+                                    <i class="search icon"></i> {{ 'sylius.ui.search'|trans }}</button>
+                                <a href="{{ result | remove_query }}"
+                                   class="ui negative icon labeled button">
+                                    <i class="cancel icon"></i> {{ 'sylius.ui.clear'|trans }}
+                                </a>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
-            {% if result.items|length > 0 %}
+
+            {% if result.getResult().items | length > 0 %}
                 <div class="ui three cards" id="products">
-                    {% for product in result.items %}
+                    {% for product in result.getResult().items %}
                         {% include '@SyliusApisearchPlugin/Taxon/Static/_box.html.twig' %}
                     {% endfor %}
                 </div>
@@ -79,5 +90,6 @@
 {% block javascripts %}
     {{ parent() }}
 
+    {% include '@SyliusApisearchPlugin/Taxon/Static/_autocomplete.html.twig' with {'configuration': result.getConfiguration() } %}
     {% include 'SyliusUiBundle::_javascripts.html.twig' with {'path': 'bundles/syliusapisearchplugin/js/apisearch-taxon.js'} %}
 {% endblock %}

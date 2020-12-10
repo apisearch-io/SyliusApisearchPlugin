@@ -7,3 +7,9 @@ services:
         - "@sylius_apisearch.configuration"
         - "@sylius_apisearch.url.url_builder"
         - "@sylius.context.locale"
+        
+  sylius_apisearch.search.view.search_view_context:
+      class: Apisearch\SyliusApisearchPlugin\Search\View\SearchViewContext
+      arguments:
+        - "@sylius_apisearch.configuration"
+        - "@sylius_apisearch.search.search"

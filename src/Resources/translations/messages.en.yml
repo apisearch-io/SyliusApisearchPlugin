@@ -5,12 +5,16 @@ apisearch:
     sorting:
       title: Sorting
       position:
-        asc: position asc
-        desc: position desc
+        asc: Position ASC
+        desc: Position DESC
       price:
-        asc: price asc
-        desc: price desc
+        asc: Price ASC
+        desc: Price DESC
+    size:
+        title: Size
     remove_selected: Remove selected
     fields:
       price: Price
       query: Keywords
+      min_price: Min. price
+      max_price: Max. price

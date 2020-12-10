@@ -15,21 +15,18 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\EventListener;
 
-use Apisearch\SyliusApisearchPlugin\Populate\PopulateInterface;
+use Apisearch\SyliusApisearchPlugin\Indexing\PopulateInterface;
+use Exception;
 use Sylius\Component\Core\Model\ProductInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ProductListener
 {
-    /**
-     * @var PopulateInterface
-     */
+    /** @var PopulateInterface */
     private $populate;
 
     /**
      * ProductListener constructor.
-     *
-     * @param PopulateInterface $populate
      */
     public function __construct(PopulateInterface $populate)
     {
@@ -37,9 +34,7 @@ class ProductListener
     }
 
     /**
-     * @param GenericEvent $event
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function onCreate(GenericEvent $event): void
     {
@@ -49,13 +44,11 @@ class ProductListener
             return;
         }
 
-        $this->populate->populateSingle($product, true);
+        $this->populate->populateSingle($product, null, true);
     }
 
     /**
-     * @param GenericEvent $event
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function onUpdate(GenericEvent $event): void
     {
@@ -65,13 +58,11 @@ class ProductListener
             return;
         }
 
-        $this->populate->updateSingle($product);
+        $this->populate->updateSingle($product, null, true);
     }
 
     /**
-     * @param GenericEvent $event
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function onDelete(GenericEvent $event): void
     {
@@ -81,6 +72,6 @@ class ProductListener
             return;
         }
 
-        $this->populate->removeSingle($product);
+        $this->populate->removeSingle($product, null, true);
     }
 }

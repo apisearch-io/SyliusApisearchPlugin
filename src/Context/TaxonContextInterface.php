@@ -16,14 +16,8 @@ declare(strict_types=1);
 namespace Apisearch\SyliusApisearchPlugin\Context;
 
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 interface TaxonContextInterface
 {
-    /**
-     * @param Request $request
-     *
-     * @return TaxonInterface
-     */
-    public function findByRequest(Request $request): TaxonInterface;
+    public function findBySlug(string $slug): TaxonInterface;
 }

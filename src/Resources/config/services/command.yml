@@ -3,14 +3,16 @@ services:
   sylius_apisearch.command.populate:
     class: Apisearch\SyliusApisearchPlugin\Command\PopulateCommand
     arguments:
-      - "@sylius_apisearch.populate.resetting"
-      - "@sylius_apisearch.populate.populate"
+      - "@sylius_apisearch.indexing.resetting"
+      - "@sylius_apisearch.indexing.populate"
+      - "@sylius_apisearch.repository.product"
+      - "@sylius.locale_provider"
     tags:
       - { name: console.command }
 
   sylius_apisearch.command.reset:
     class: Apisearch\SyliusApisearchPlugin\Command\ResetCommand
     arguments:
-      - "@sylius_apisearch.populate.resetting"
+      - "@sylius_apisearch.indexing.resetting"
     tags:
       - { name: console.command }

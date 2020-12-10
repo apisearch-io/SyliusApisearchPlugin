@@ -19,28 +19,26 @@ use Apisearch\Query\Filter;
 use Apisearch\Query\SortBy;
 use Apisearch\Result\Aggregation;
 use Apisearch\Result\Counter;
-use Apisearch\Result\Result;
+use Apisearch\SyliusApisearchPlugin\Search\SearchResult;
+use function array_merge;
+use function array_values;
+use function count;
+use function explode;
+use function round;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 
 class UrlBuilder
 {
-    /**
-     * @var Request
-     */
+    /** @var Request */
     private $request;
 
-    /**
-     * @var RouterInterface
-     */
+    /** @var RouterInterface */
     private $router;
 
     /**
      * UrlBuilder constructor.
-     *
-     * @param RequestStack $requestStack
-     * @param RouterInterface $router
      */
     public function __construct(RequestStack $requestStack, RouterInterface $router)
     {
@@ -48,15 +46,8 @@ class UrlBuilder
         $this->router = $router;
     }
 
-    /**
-     * @param Result $result
-     * @param Aggregation $aggregation
-     * @param Counter $counter
-     *
-     * @return string
-     */
     public function guessFilterValue(
-        Result $result,
+        SearchResult $result,
         Aggregation $aggregation,
         Counter $counter
     ): string {
@@ -73,19 +64,12 @@ class UrlBuilder
             );
     }
 
-    /**
-     * @param Result $result
-     * @param string $filterName
-     * @param string $value
-     *
-     * @return string
-     */
     public function addFilterValue(
-        Result $result,
+        SearchResult $result,
         string $filterName,
         string $value
     ): string {
-        $urlParameters = \array_merge(
+        $urlParameters = array_merge(
             $this->generateQueryUrlParameters($result, $filterName),
             [
                 'slug' => $this->request->attributes->get('slug'),
@@ -105,19 +89,12 @@ class UrlBuilder
         );
     }
 
-    /**
-     * @param Result $result
-     * @param string $filterName
-     * @param string|null $value
-     *
-     * @return string
-     */
     public function removeFilterValue(
-        Result $result,
+        SearchResult $result,
         string $filterName,
         string $value = null
     ): string {
-        $urlParameters = \array_merge(
+        $urlParameters = array_merge(
             $this->generateQueryUrlParameters($result, $filterName),
             [
                 'slug' => $this->request->attributes->get('slug'),
@@ -139,14 +116,9 @@ class UrlBuilder
         );
     }
 
-    /**
-     * @param Result $result
-     *
-     * @return string
-     */
-    public function removeQuery(Result $result): string
+    public function removeQuery(SearchResult $result): string
     {
-        $urlParameters = \array_merge(
+        $urlParameters = array_merge(
             $this->generateQueryUrlParameters($result),
             [
                 'slug' => $this->request->attributes->get('slug'),
@@ -163,14 +135,9 @@ class UrlBuilder
         );
     }
 
-    /**
-     * @param Result $result
-     *
-     * @return string
-     */
-    public function removePriceRangeFilter(Result $result): string
+    public function removePriceRangeFilter(SearchResult $result): string
     {
-        $urlParameters = \array_merge(
+        $urlParameters = array_merge(
             $this->generateQueryUrlParameters($result),
             [
                 'slug' => $this->request->attributes->get('slug'),
@@ -195,16 +162,9 @@ class UrlBuilder
         );
     }
 
-    /**
-     * @param Result $result
-     * @param string $field
-     * @param string $mode
-     *
-     * @return string|null
-     */
-    public function addSortBy(Result $result, string $field, string $mode): ? string
+    public function addSortBy(SearchResult $result, string $field, string $mode): ? string
     {
-        $urlParameters = \array_merge(
+        $urlParameters = array_merge(
             $this->generateQueryUrlParameters($result),
             [
                 'slug' => $this->request->attributes->get('slug'),
@@ -237,19 +197,13 @@ class UrlBuilder
         );
     }
 
-    /**
-     * @param Result $result
-     * @param int $size
-     *
-     * @return string
-     */
-    public function changePageSize(Result $result, int $size): string
+    public function changePageSize(SearchResult $result, int $size): string
     {
-        $urlParameters = \array_merge(
+        $urlParameters = array_merge(
             $this->generateQueryUrlParameters($result),
             [
                 'slug' => $this->request->attributes->get('slug'),
-                'page_size' => $size
+                'page_size' => $size,
             ]
         );
 
@@ -259,14 +213,8 @@ class UrlBuilder
         );
     }
 
-    /**
-     * @param Result $result
-     * @param string|null $filterName
-     *
-     * @return array
-     */
     private function generateQueryUrlParameters(
-        Result $result,
+        SearchResult $result,
         string $filterName = null
     ): array {
         $query = $result->getQuery();
@@ -287,21 +235,21 @@ class UrlBuilder
 
         unset($urlParameters['_query']);
 
-        $price = ['min' => -1, 'max' => -1];
-        if (isset($urlParameters['price']) && \count($urlParameters['price']) > 0) {
-            $priceUrl = \array_values($urlParameters['price'])[0];
-            [$price['min'], $price['max']] = \explode('..', $priceUrl);
+        $price = ['min' => null, 'max' => null];
+        if (isset($urlParameters['price']) && count($urlParameters['price']) > 0) {
+            $priceUrl = array_values($urlParameters['price'])[0];
+            [$price['min'], $price['max']] = explode('..', $priceUrl);
             $price = array_map(function ($row) {
                 return $row <= 0
-                    ? -1
-                    : (int) \round($row / 100, 2)
+                    ? null
+                    : (int) round($row / 100, 2)
                 ;
             }, $price);
 
             unset($urlParameters['price']);
         }
 
-        $urlParameters = \array_merge(
+        $urlParameters = array_merge(
             $urlParameters,
             [
                 'price_min' => $price['min'],

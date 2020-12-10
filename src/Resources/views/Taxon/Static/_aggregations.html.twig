@@ -4,7 +4,7 @@
     maxElements
     ) %}
     {% import _self as _aggregations %}
-    {% set aggregation = result.aggregation(aggregationName) %}
+    {% set aggregation = result.getResult().getAggregation(aggregationName) %}
 
     {% if aggregation != null and not aggregation|call('isEmpty') %}
         <div class="item">
@@ -46,7 +46,7 @@
     counterId
     ) %}
     {% import _self as _aggregations %}
-    {% set aggregation = result.aggregation(aggregationName) %}
+    {% set aggregation = result.getResult().getAggregation(aggregationName) %}
     {% set counter = aggregation|call('getCounters')[counterId] %}
     {% if counter is not null %}
         {% set edited_search_query = counter|call('isUsed')
@@ -69,7 +69,7 @@
 
 {% macro printPriceRange(result) %}
     {% import _self as _aggregations %}
-    {% set aggregation = result.aggregation('price') %}
+    {% set aggregation = result.getResult().getAggregation('price') %}
 
     {% if aggregation != null and not aggregation.isEmpty() %}
         {% set result_min_price = app.request.query.get('price_min') %}

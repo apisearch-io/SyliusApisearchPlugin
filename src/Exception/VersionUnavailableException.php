@@ -19,8 +19,6 @@ class VersionUnavailableException extends \Exception
 {
     /**
      * VersionUnavailableException constructor.
-     *
-     * @param string $version
      */
     public function __construct(string $version)
     {

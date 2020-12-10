@@ -15,129 +15,59 @@ declare(strict_types=1);
 
 namespace Apisearch\SyliusApisearchPlugin\Controller;
 
-use Apisearch\SyliusApisearchPlugin\Configuration\ApisearchConfigurationInterface;
 use Apisearch\SyliusApisearchPlugin\Context\TaxonContextInterface;
-use Apisearch\SyliusApisearchPlugin\Element;
+use Apisearch\SyliusApisearchPlugin\Exception\TaxonNotFoundException;
 use Apisearch\SyliusApisearchPlugin\Exception\VersionUnavailableException;
-use Apisearch\SyliusApisearchPlugin\Search\SearchInterface;
-use Pagerfanta\Adapter\NullAdapter;
-use Pagerfanta\Pagerfanta;
-use Sylius\Component\Core\Model\TaxonInterface;
+use Apisearch\SyliusApisearchPlugin\Search\View\SearchViewContext;
+use function array_merge;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TaxonController
 {
-    /**
-     * @var ApisearchConfigurationInterface
-     */
-    private $configuration;
+    /** @var EngineInterface */
+    private $templatingEngine;
 
-    /**
-     * @var TaxonContextInterface
-     */
+    /** @var SearchViewContext */
+    private $searchViewContext;
+
+    /** @var TaxonContextInterface */
     private $taxonContext;
 
     /**
-     * @var SearchInterface
-     */
-    private $search;
-
-    /**
-     * @var EngineInterface
-     */
-    private $templatingEngine;
-
-    /**
      * TaxonStaticController constructor.
-     *
-     * @param ApisearchConfigurationInterface $configuration
-     * @param TaxonContextInterface $taxonContext
-     * @param SearchInterface $search
-     * @param EngineInterface $templatingEngine
      */
     public function __construct(
-        ApisearchConfigurationInterface $configuration,
-        TaxonContextInterface $taxonContext,
-        SearchInterface $search,
-        EngineInterface $templatingEngine
+        EngineInterface $templatingEngine,
+        SearchViewContext $searchViewContext,
+        TaxonContextInterface $taxonContext
     ) {
-        $this->configuration = $configuration;
-        $this->taxonContext = $taxonContext;
-        $this->search = $search;
         $this->templatingEngine = $templatingEngine;
+        $this->searchViewContext = $searchViewContext;
+        $this->taxonContext = $taxonContext;
     }
 
     /**
-     * @param Request $request
-     *
-     * @return Response
-     *
      * @throws VersionUnavailableException
      */
     public function __invoke(Request $request): Response
     {
-        $taxon = $this->taxonContext->findByRequest($request);
-
-        $version = $this->configuration->getVersion();
-        switch ($this->configuration->getVersion()) {
-            case Element::VERSION_STATIC:
-                $parameters = $this->versionStatic($request, $taxon);
-
-                break;
-            case Element::VERSION_DYNAMIC:
-                $parameters = $this->versionDynamic();
-
-                break;
-            default:
-                throw new VersionUnavailableException($version);
+        $slug = $request->get('slug', null);
+        if (null === $slug) {
+            throw new TaxonNotFoundException();
         }
+
+        $taxon = $this->taxonContext->findBySlug($slug);
 
         return $this->templatingEngine->renderResponse(
             $request->get('template'),
-            \array_merge(
+            array_merge(
                 [
                     'taxon' => $taxon,
-                    'configuration' => $this->configuration,
                 ],
-                $parameters
+                $this->searchViewContext->getParameters($request, $taxon)
             )
         );
-    }
-
-    /**
-     * @param Request $request
-     * @param TaxonInterface $taxon
-     *
-     * @return array
-     */
-    private function versionStatic(Request $request, TaxonInterface $taxon): array
-    {
-        $result = $this->search->getResult($request, $taxon);
-
-        $pagerAdapter = new NullAdapter($result->getTotalHits());
-        $pagerfanta = new Pagerfanta($pagerAdapter);
-
-        $pagerfanta->setMaxPerPage(
-            $this->search->getCurrentSize($request)
-        );
-
-        $pagerfanta->setCurrentPage(
-            $this->search->getCurrentPage($request)
-        );
-
-        return [
-            'result' => $result,
-            'pager' => $pagerfanta,
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    private function versionDynamic(): array
-    {
-        return [];
     }
 }
